@@ -1394,6 +1394,7 @@ async function startExercise(unitKey) {
         <div>
           <button class="btn btn-success btn-sm" id="check-btn" onclick="checkAllStudent()">&#10003; 정답 확인</button>
           <button class="btn btn-secondary btn-sm" onclick="startExercise('${unitKey}')">&#8635; 다시 풀기</button>
+          <button class="btn btn-secondary btn-sm" onclick="printWorksheet('${unitKey}')">🖨 프린트</button>
         </div>
       </div>
       <div id="worksheet"></div>
@@ -1488,6 +1489,79 @@ function unpickSlot(itemIdx, slotIdx) {
 // ═══════════════════════════════════════════
 // 정답 확인 (학생용)
 // ═══════════════════════════════════════════
+// ═══════════════════════════════════════════
+// 워크시트 프린트
+// ═══════════════════════════════════════════
+function printWorksheet(unitKey) {
+  if (!currentExerciseData || !currentExerciseData.items.length) { toast('문제가 없습니다'); return; }
+  const parts = unitKey.split('/');
+  const ch = CURRICULUM[parts[0]];
+  const unit = ch ? ch.units[parts[1]] : null;
+  const chTitle = ch ? ch.title : '';
+  const unitTitle = unit ? unit.title : '';
+  const studentName = currentUser ? currentUser.name : '';
+
+  const w = window.open('', '_blank');
+  let html = `<!DOCTYPE html><html><head><meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+      *{box-sizing:border-box;margin:0;padding:0}
+      body{font-family:'Pretendard',sans-serif;padding:32px;color:#2D2926;font-size:14px}
+      .print-header{text-align:center;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid #2D2926}
+      .print-header h1{font-family:'Gowun Batang',serif;font-size:22px;margin-bottom:4px}
+      .print-header .sub{font-size:13px;color:#5C554E;margin-bottom:8px}
+      .print-meta{display:flex;justify-content:space-between;font-size:12px;color:#9A928A;margin-top:10px}
+      .item{margin-bottom:20px;page-break-inside:avoid;border:1px solid #ddd;border-radius:8px;padding:16px}
+      .item-num{font-family:'Caveat',cursive;font-size:22px;color:#E8734A;font-weight:700;margin-bottom:4px}
+      .item-ko{font-size:13px;color:#5C554E;margin-bottom:12px}
+      .blocks{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;padding:10px;background:#FFF8F0;border-radius:6px;border:1px dashed #ddd}
+      .block{display:inline-flex;align-items:center;gap:4px;padding:6px 14px;border-radius:6px;font-weight:700;font-size:14px;color:#fff}
+      .block-det{background:#F4C84B;color:#2D2926}
+      .block-subject{background:#5B9BD5}
+      .block-verb{background:#E8734A}
+      .block-object{background:#6BBF8A}
+      .block-modifier{background:#9B7ED8}
+      .block-prep{background:#E88BAF}
+      .answer-line{display:flex;gap:6px;flex-wrap:wrap}
+      .answer-slot{min-width:50px;height:32px;border-bottom:2px solid #9A928A;display:inline-block}
+      @media print{body{padding:20px}.item{break-inside:avoid}}
+    </style></head><body>`;
+
+  html += `<div class="print-header">
+    <h1>EPL영어학원 · 문장 조립 워크시트</h1>
+    <div class="sub">${chTitle} · ${unitTitle}</div>
+    <div class="print-meta"><span>이름: ${studentName || '_______________'}</span><span>날짜: _______________</span><span>점수: _______ / ${currentExerciseData.items.length}</span></div>
+  </div>`;
+
+  currentExerciseData.items.forEach((item, idx) => {
+    // 블록을 섞어서 표시
+    const shuffled = [...item.blocks, ...(item.distractors || [])].sort(() => Math.random() - 0.5);
+    const roleClass = {det:'block-det',subject:'block-subject',verb:'block-verb',object:'block-object',modifier:'block-modifier',prep:'block-prep'};
+    const roleIcon = {det:'🏷️',subject:'🐻',verb:'⚡',object:'🎁',modifier:'✨',prep:'🔗'};
+
+    const blocksHtml = shuffled.map(b =>
+      `<span class="block ${roleClass[b.role]||''}">${roleIcon[b.role]||''} ${b.word}</span>`
+    ).join('');
+
+    const slotsHtml = item.blocks.map(() =>
+      `<span class="answer-slot"></span>`
+    ).join('');
+
+    html += `<div class="item">
+      <div class="item-num">#${idx + 1}</div>
+      <div class="item-ko">${item.translation}</div>
+      <div class="blocks">${blocksHtml}</div>
+      <div class="answer-line">${slotsHtml}</div>
+    </div>`;
+  });
+
+  html += `</body></html>`;
+  w.document.write(html);
+  w.document.close();
+  setTimeout(() => w.print(), 300);
+}
+
 async function checkAllStudent() {
   if (!currentExerciseData) return;
   let correct = 0, total = currentExerciseData.items.length;
