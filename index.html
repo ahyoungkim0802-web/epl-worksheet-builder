@@ -95,6 +95,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Pretendard',sans-serif;f
 .block::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:0 0 var(--radius-block) var(--radius-block);background:rgba(0,0,0,.15)}
 .block:hover{transform:scale(1.06) rotate(-2deg)}
 .block:active{transform:scale(.97)}
+.block-icon{font-size:14px;margin-right:4px;display:inline-block}
 .block.placed{opacity:.35;pointer-events:none;transform:none}
 .block-det{background:var(--yellow);color:var(--ink)}.block-det::after{background:rgba(0,0,0,.1)}
 .block-subject{background:var(--blue)}
@@ -236,6 +237,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Pretendard',sans-serif;f
 const WORKER_URL='https://bitter-leaf-eb4d.ahyoungkim0802.workers.dev';
 const ROLE_CLASS={det:'block-det',subject:'block-subject',verb:'block-verb',object:'block-object',modifier:'block-modifier',prep:'block-prep',distractor:'block-distractor'};
 const ROLE_LABEL={det:'관사',subject:'주어',verb:'동사',object:'목적어',modifier:'수식어',prep:'전치사'};
+const ROLE_ICON={det:'🏷️',subject:'🐻',verb:'⚡',object:'🎁',modifier:'✨',prep:'🔗',distractor:'👻'};
 const STORAGE_KEY='epl-wb-progress';
 
 let currentData=null;
@@ -799,7 +801,7 @@ function renderWorksheet(){
       <div class="ws-item-body">
         <div class="block-bank" id="bank-${idx}">
           <div class="block-bank-label">&#129521; 블록을 클릭하세요</div>
-          ${allBlocks.map((b,bi)=>`<div class="block ${ROLE_CLASS[b.role]||'block-distractor'}" data-item="${idx}" data-bidx="${bi}" onclick="pickBlock(${idx},${bi})">${b.word}</div>`).join('')}
+          ${allBlocks.map((b,bi)=>`<div class="block ${ROLE_CLASS[b.role]||'block-distractor'}" data-item="${idx}" data-bidx="${bi}" onclick="pickBlock(${idx},${bi})"><span class="block-icon">${ROLE_ICON[b.role]||'📦'}</span>${b.word}</div>`).join('')}
         </div>
         <div class="slots" id="slots-${idx}">
           ${item.blocks.map((_,si)=>`<div class="slot" id="slot-${idx}-${si}" data-item="${idx}" data-sidx="${si}" onclick="unpickSlot(${idx},${si})"></div>`).join('')}
@@ -808,8 +810,8 @@ function renderWorksheet(){
     `;
     ws.appendChild(div);
 
-    div.querySelectorAll('.slot').forEach((s,si)=>{
-      s.innerHTML=`<span style="font-family:'Caveat',cursive;font-size:16px;color:var(--ink-mute)">${'\u2460\u2461\u2462\u2463\u2464\u2465\u2466\u2467\u2468\u2469'[si]||si+1}</span>`;
+    div.querySelectorAll('.slot').forEach((s)=>{
+      s.innerHTML=`<span style="font-size:18px;opacity:.3">🧩</span>`;
     });
   });
 }
@@ -830,7 +832,7 @@ function pickBlock(itemIdx,blockIdx){
   bankBlocks[blockIdx].classList.add('placed');
 
   const slot=document.getElementById(`slot-${itemIdx}-${slotIdx}`);
-  slot.innerHTML=`<div class="block ${ROLE_CLASS[block.role]||'block-distractor'}" style="cursor:pointer">${block.word}</div>`;
+  slot.innerHTML=`<div class="block ${ROLE_CLASS[block.role]||'block-distractor'}" style="cursor:pointer"><span class="block-icon">${ROLE_ICON[block.role]||'📦'}</span>${block.word}</div>`;
   slot.classList.add('filled');
 }
 
@@ -846,7 +848,7 @@ function unpickSlot(itemIdx,slotIdx){
   bankBlocks[blockIdx].classList.remove('placed');
 
   const slot=document.getElementById(`slot-${itemIdx}-${slotIdx}`);
-  slot.innerHTML=`<span style="font-family:'Caveat',cursive;font-size:16px;color:var(--ink-mute)">${'\u2460\u2461\u2462\u2463\u2464\u2465\u2466\u2467\u2468\u2469'[slotIdx]}</span>`;
+  slot.innerHTML=`<span style="font-size:18px;opacity:.3">🧩</span>`;
   slot.classList.remove('filled','correct','wrong');
 }
 
