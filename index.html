@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EPL 워크시트 빌더</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFF8F0;--bg-card:#FFFFFF;--bg-deep:#F5EDE0;
+  --ink:#2D2926;--ink-soft:#5C554E;--ink-mute:#9A928A;
+  --accent:#E8734A;--accent-soft:#F49D7A;
+  --blue:#5B9BD5;--green:#6BBF8A;--purple:#9B7ED8;--yellow:#F4C84B;--pink:#E88BAF;--red:#E85D5D;
+  --shadow:0 2px 8px rgba(0,0,0,.08);--shadow-block:0 3px 0 rgba(0,0,0,.12);
+  --radius:12px;--radius-block:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'Pretendard',sans-serif;font-size:15px;line-height:1.6;min-height:100vh}
+
+/* Header */
+.header{background:var(--bg-card);border-bottom:1px solid var(--bg-deep);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:var(--shadow)}
+.header-brand{font-family:'Gowun Batang',serif;font-weight:700;font-size:22px;color:var(--ink)}
+.header-brand em{font-family:'Caveat',cursive;font-style:normal;color:var(--accent);font-size:26px}
+.header-sub{font-size:12px;color:var(--ink-mute)}
+.header-actions{display:flex;gap:8px}
+
+/* Controls Bar */
+.controls{background:var(--bg-card);border-bottom:1px solid var(--bg-deep);padding:16px 24px;display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end}
+.ctrl{display:flex;flex-direction:column;gap:4px}
+.ctrl label{font-size:11px;font-weight:600;color:var(--ink-mute);text-transform:uppercase;letter-spacing:.06em}
+.ctrl input,.ctrl select{padding:8px 12px;border:1.5px solid var(--bg-deep);border-radius:var(--radius-block);font-family:inherit;font-size:14px;background:var(--bg);outline:none;transition:border-color .15s}
+.ctrl input:focus,.ctrl select:focus{border-color:var(--accent)}
+
+.btn{padding:10px 20px;border:none;border-radius:var(--radius-block);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 3px 0 #c45a30}.btn-primary:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 4px 0 #c45a30}
+.btn-secondary{background:var(--bg-deep);color:var(--ink)}.btn-secondary:hover{background:#ebe2d0}
+.btn-success{background:var(--green);color:#fff;box-shadow:0 3px 0 #4ea06a}
+
+/* Main */
+.main{max-width:900px;margin:0 auto;padding:24px}
+
+/* Worksheet Item */
+.ws-item{background:var(--bg-card);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden;transition:all .3s}
+.ws-item-header{padding:16px 20px;border-bottom:1px solid var(--bg-deep);display:flex;justify-content:space-between;align-items:center}
+.ws-item-num{font-family:'Caveat',cursive;font-weight:700;font-size:28px;color:var(--accent)}
+.ws-item-ko{font-size:14px;color:var(--ink-soft);font-style:italic}
+.ws-item-body{padding:20px}
+
+/* Block Bank */
+.block-bank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px;min-height:48px;padding:12px;background:var(--bg);border-radius:var(--radius-block);border:1.5px dashed var(--bg-deep)}
+.block-bank-label{width:100%;text-align:center;font-size:11px;color:var(--ink-mute);font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+
+/* Word Block (LEGO brick) */
+.block{display:inline-flex;align-items:center;padding:8px 16px;border-radius:var(--radius-block);font-weight:700;font-size:15px;color:#fff;cursor:pointer;transition:all .15s;user-select:none;position:relative;letter-spacing:.02em}
+.block::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:0 0 var(--radius-block) var(--radius-block);background:rgba(0,0,0,.15)}
+.block:hover{transform:scale(1.06) rotate(-2deg)}
+.block:active{transform:scale(.97)}
+.block.placed{opacity:.35;pointer-events:none;transform:none}
+.block-det{background:var(--yellow);color:var(--ink)}.block-det::after{background:rgba(0,0,0,.1)}
+.block-subject{background:var(--blue)}
+.block-verb{background:var(--accent)}
+.block-object{background:var(--green)}
+.block-modifier{background:var(--purple)}
+.block-prep{background:var(--pink)}
+.block-distractor{background:var(--ink-mute)}
+
+/* Sentence Slots */
+.slots{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:12px;background:var(--bg-deep);border-radius:var(--radius-block);min-height:52px}
+.slot{min-width:60px;min-height:40px;border:2px dashed var(--ink-mute);border-radius:var(--radius-block);display:flex;align-items:center;justify-content:center;padding:6px 12px;font-size:12px;color:var(--ink-mute);transition:all .2s;position:relative}
+.slot.filled{border-style:solid;border-color:var(--accent-soft)}
+.slot.correct{border-color:var(--green);background:rgba(107,191,138,.1)}
+.slot.correct::before{content:'✓';position:absolute;top:-8px;right:-8px;background:var(--green);color:#fff;width:18px;height:18px;border-radius:50%;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.slot.wrong{border-color:var(--red);background:rgba(232,93,93,.08);animation:shake .4s ease}
+.slot .block{margin:0}
+.slot .block::after{display:none}
+.slot .block:hover{transform:none}
+
+/* Score */
+.score-bar{background:var(--bg-card);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;text-align:center;margin-top:12px;display:none}
+.score-bar.show{display:block}
+.score-num{font-family:'Caveat',cursive;font-size:48px;font-weight:700;color:var(--accent)}
+.score-label{font-size:13px;color:var(--ink-mute);margin-top:4px}
+
+/* Celebration */
+.celebration{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:1000;display:none}
+.celebration.show{display:block}
+.confetti{position:absolute;width:10px;height:10px;border-radius:2px;animation:fall 2s ease forwards}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+
+/* Loading */
+.loading{text-align:center;padding:40px;color:var(--ink-mute)}
+.loading .dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--accent);margin:0 4px;animation:bounce .6s ease infinite}
+.loading .dot:nth-child(2){animation-delay:.1s}.loading .dot:nth-child(3){animation-delay:.2s}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+/* Sample chips */
+.sample-bar{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+.sample-chip{padding:8px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--bg-deep);background:var(--bg-card);color:var(--ink-soft);transition:all .15s}
+.sample-chip:hover{border-color:var(--accent);color:var(--accent)}
+
+/* Toast */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--ink);color:#fff;padding:10px 24px;border-radius:var(--radius-block);font-size:13px;font-weight:600;z-index:9999;transition:transform .3s;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* Print */
+@media print{
+  .header,.controls,.btn,.sample-bar,.score-bar,.block-bank-label,.toast{display:none!important}
+  body{background:#fff}
+  .ws-item{box-shadow:none;border:1px solid #ddd;break-inside:avoid}
+  .block-bank{border:1px solid #ccc}
+  .slots{background:#f5f5f5}
+  .main{max-width:100%;padding:0}
+  .print-header{display:block!important}
+}
+.print-header{display:none;text-align:center;margin-bottom:24px;padding:16px;border-bottom:2px solid var(--ink)}
+.print-header h1{font-family:'Gowun Batang',serif;font-size:20px;margin-bottom:4px}
+.print-header .meta{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-mute);margin-top:8px}
+
+/* Mobile */
+@media(max-width:640px){
+  .controls{flex-direction:column;gap:10px}
+  .ctrl{width:100%}
+  .ctrl input,.ctrl select{width:100%}
+  .block{padding:6px 12px;font-size:13px}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-brand"><em>EPL</em> Worksheet Builder</div>
+    <div class="header-sub">LEGO 블록으로 영어 문장 만들기</div>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-secondary" onclick="window.print()">🖨 인쇄</button>
+  </div>
+</div>
+
+<div class="controls">
+  <div class="ctrl"><label>주제</label><input id="c-topic" placeholder="예: 동물, 음식, 학교" value="동물"></div>
+  <div class="ctrl"><label>레벨</label><select id="c-level"><option>Beginner</option><option selected>Intermediate</option><option>Advanced</option></select></div>
+  <div class="ctrl"><label>문항 수</label><select id="c-count"><option>3</option><option selected>5</option><option>8</option></select></div>
+  <div class="ctrl"><label>방해 블록</label><select id="c-distract"><option value="1">포함</option><option value="0">없음</option></select></div>
+  <button class="btn btn-primary" id="gen-btn" onclick="generate()">🧱 워크시트 만들기</button>
+  <button class="btn btn-success" id="check-btn" onclick="checkAll()" style="display:none">✓ 정답 확인</button>
+  <button class="btn btn-secondary" id="reset-btn" onclick="resetAll()" style="display:none">↻ 다시 풀기</button>
+</div>
+
+<div class="main">
+  <div class="print-header">
+    <h1 id="print-title">EPL영어학원 · 영어 문장 만들기</h1>
+    <div class="meta"><span>이름: _______________</span><span>날짜: _______________</span></div>
+  </div>
+
+  <div class="sample-bar">
+    <span style="font-size:12px;color:var(--ink-mute);align-self:center">샘플:</span>
+    <div class="sample-chip" onclick="loadSample(0)">🐱 Beginner</div>
+    <div class="sample-chip" onclick="loadSample(1)">📚 Intermediate</div>
+    <div class="sample-chip" onclick="loadSample(2)">🏫 Advanced</div>
+  </div>
+
+  <div class="loading" id="loading" style="display:none">
+    <div><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+    <div style="margin-top:12px">블록을 조립하는 중...</div>
+  </div>
+
+  <div id="worksheet"></div>
+
+  <div class="score-bar" id="score-bar">
+    <div class="score-num" id="score-num">0/0</div>
+    <div class="score-label">정답률</div>
+  </div>
+</div>
+
+<div class="celebration" id="celebration"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const WORKER_URL='https://bitter-leaf-eb4d.ahyoungkim0802.workers.dev';
+const ROLE_CLASS={det:'block-det',subject:'block-subject',verb:'block-verb',object:'block-object',modifier:'block-modifier',prep:'block-prep',distractor:'block-distractor'};
+const ROLE_LABEL={det:'관사',subject:'주어',verb:'동사',object:'목적어',modifier:'수식어',prep:'전치사'};
+
+let currentData=null;
+let itemStates=[];
+
+function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),1800)}
+
+// ═══ SAMPLE DATA ═══
+const SAMPLES=[
+  {title:"🐱 동물 문장 만들기 (Beginner)",items:[
+    {target:"The cat runs.",translation:"고양이가 달린다.",blocks:[{word:"The",role:"det",correct_pos:0},{word:"cat",role:"subject",correct_pos:1},{word:"runs",role:"verb",correct_pos:2}],distractors:[{word:"dog",role:"subject"}]},
+    {target:"I like apples.",translation:"나는 사과를 좋아한다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"like",role:"verb",correct_pos:1},{word:"apples",role:"object",correct_pos:2}],distractors:[{word:"eat",role:"verb"}]},
+    {target:"She is happy.",translation:"그녀는 행복하다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"happy",role:"modifier",correct_pos:2}],distractors:[{word:"sad",role:"modifier"}]},
+    {target:"Birds fly high.",translation:"새들은 높이 난다.",blocks:[{word:"Birds",role:"subject",correct_pos:0},{word:"fly",role:"verb",correct_pos:1},{word:"high",role:"modifier",correct_pos:2}],distractors:[]},
+    {target:"He reads books.",translation:"그는 책을 읽는다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"reads",role:"verb",correct_pos:1},{word:"books",role:"object",correct_pos:2}],distractors:[{word:"writes",role:"verb"}]}
+  ]},
+  {title:"📚 학교 문장 만들기 (Intermediate)",items:[
+    {target:"The book is on the table.",translation:"책은 테이블 위에 있다.",blocks:[{word:"The",role:"det",correct_pos:0},{word:"book",role:"subject",correct_pos:1},{word:"is",role:"verb",correct_pos:2},{word:"on",role:"prep",correct_pos:3},{word:"the",role:"det",correct_pos:4},{word:"table",role:"object",correct_pos:5}],distractors:[{word:"under",role:"prep"}]},
+    {target:"We go to school.",translation:"우리는 학교에 간다.",blocks:[{word:"We",role:"subject",correct_pos:0},{word:"go",role:"verb",correct_pos:1},{word:"to",role:"prep",correct_pos:2},{word:"school",role:"object",correct_pos:3}],distractors:[{word:"home",role:"object"}]},
+    {target:"She plays the piano.",translation:"그녀는 피아노를 친다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"plays",role:"verb",correct_pos:1},{word:"the",role:"det",correct_pos:2},{word:"piano",role:"object",correct_pos:3}],distractors:[{word:"guitar",role:"object"}]},
+    {target:"They eat lunch at noon.",translation:"그들은 정오에 점심을 먹는다.",blocks:[{word:"They",role:"subject",correct_pos:0},{word:"eat",role:"verb",correct_pos:1},{word:"lunch",role:"object",correct_pos:2},{word:"at",role:"prep",correct_pos:3},{word:"noon",role:"modifier",correct_pos:4}],distractors:[]},
+    {target:"My dog is very cute.",translation:"내 강아지는 매우 귀엽다.",blocks:[{word:"My",role:"det",correct_pos:0},{word:"dog",role:"subject",correct_pos:1},{word:"is",role:"verb",correct_pos:2},{word:"very",role:"modifier",correct_pos:3},{word:"cute",role:"modifier",correct_pos:4}],distractors:[{word:"big",role:"modifier"}]}
+  ]},
+  {title:"🏫 복합 문장 만들기 (Advanced)",items:[
+    {target:"I want to eat pizza.",translation:"나는 피자를 먹고 싶다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"want",role:"verb",correct_pos:1},{word:"to",role:"prep",correct_pos:2},{word:"eat",role:"verb",correct_pos:3},{word:"pizza",role:"object",correct_pos:4}],distractors:[{word:"drink",role:"verb"}]},
+    {target:"She is reading a book in the library.",translation:"그녀는 도서관에서 책을 읽고 있다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"reading",role:"verb",correct_pos:2},{word:"a",role:"det",correct_pos:3},{word:"book",role:"object",correct_pos:4},{word:"in",role:"prep",correct_pos:5},{word:"the",role:"det",correct_pos:6},{word:"library",role:"object",correct_pos:7}],distractors:[{word:"park",role:"object"}]},
+    {target:"He can swim very fast.",translation:"그는 매우 빠르게 수영할 수 있다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"can",role:"verb",correct_pos:1},{word:"swim",role:"verb",correct_pos:2},{word:"very",role:"modifier",correct_pos:3},{word:"fast",role:"modifier",correct_pos:4}],distractors:[{word:"slowly",role:"modifier"}]},
+    {target:"We should study hard for the test.",translation:"우리는 시험을 위해 열심히 공부해야 한다.",blocks:[{word:"We",role:"subject",correct_pos:0},{word:"should",role:"verb",correct_pos:1},{word:"study",role:"verb",correct_pos:2},{word:"hard",role:"modifier",correct_pos:3},{word:"for",role:"prep",correct_pos:4},{word:"the",role:"det",correct_pos:5},{word:"test",role:"object",correct_pos:6}],distractors:[{word:"easy",role:"modifier"}]},
+    {target:"The children are playing in the park.",translation:"아이들은 공원에서 놀고 있다.",blocks:[{word:"The",role:"det",correct_pos:0},{word:"children",role:"subject",correct_pos:1},{word:"are",role:"verb",correct_pos:2},{word:"playing",role:"verb",correct_pos:3},{word:"in",role:"prep",correct_pos:4},{word:"the",role:"det",correct_pos:5},{word:"park",role:"object",correct_pos:6}],distractors:[{word:"garden",role:"object"}]}
+  ]}
+];
+
+function loadSample(idx){
+  currentData=SAMPLES[idx];
+  renderWorksheet();
+  toast('샘플 워크시트 로드됨');
+}
+
+// ═══ AI GENERATE ═══
+async function generate(){
+  const topic=document.getElementById('c-topic').value.trim()||'동물';
+  const level=document.getElementById('c-level').value;
+  const count=parseInt(document.getElementById('c-count').value);
+  const distract=document.getElementById('c-distract').value==='1';
+  const btn=document.getElementById('gen-btn');
+  const loading=document.getElementById('loading');
+
+  btn.disabled=true;loading.style.display='block';
+  document.getElementById('worksheet').innerHTML='';
+  document.getElementById('score-bar').classList.remove('show');
+
+  const prompt=`주제: ${topic}, 레벨: ${level}, 문항수: ${count}, 방해블록: ${distract?'포함':'없음'}
+
+영어 문장 조립 워크시트를 만드세요. 각 문장을 단어 블록으로 분해하세요.
+
+JSON으로만 응답:
+{"title":"제목","items":[{"target":"완성 문장","translation":"한국어 해석","blocks":[{"word":"단어","role":"det|subject|verb|object|modifier|prep","correct_pos":0}],"distractors":[{"word":"방해단어","role":"역할"}]}]}
+
+role 종류: det(관사/한정사), subject(주어), verb(동사), object(목적어), modifier(형용사/부사), prep(전치사)
+correct_pos는 올바른 순서(0부터). ${level} 수준에 맞는 문장을 만드세요.`;
+
+  try{
+    const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:4096,system:'영어 학습 워크시트 생성기. JSON으로만 응답하세요.',messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    let raw=data.content?.[0]?.text||'';
+    raw=raw.replace(/```json\s*/g,'').replace(/```\s*/g,'').trim();
+    const fi=raw.indexOf('{'),li=raw.lastIndexOf('}');
+    if(fi>=0&&li>fi)raw=raw.substring(fi,li+1);
+    currentData=JSON.parse(raw);
+    renderWorksheet();
+    toast('워크시트 생성 완료!');
+  }catch(e){
+    console.error(e);
+    document.getElementById('worksheet').innerHTML=`<div style="text-align:center;padding:32px;color:var(--red)">⚠ ${e.message}<br><button class="btn btn-primary" style="margin-top:12px" onclick="generate()">다시 시도</button></div>`;
+  }finally{btn.disabled=false;loading.style.display='none'}
+}
+
+// ═══ RENDER ═══
+function renderWorksheet(){
+  if(!currentData)return;
+  const ws=document.getElementById('worksheet');
+  ws.innerHTML='';
+  itemStates=[];
+  document.getElementById('print-title').textContent='EPL영어학원 · '+(currentData.title||'워크시트');
+  document.getElementById('check-btn').style.display='inline-flex';
+  document.getElementById('reset-btn').style.display='inline-flex';
+  document.getElementById('score-bar').classList.remove('show');
+
+  currentData.items.forEach((item,idx)=>{
+    const allBlocks=[...item.blocks,...(item.distractors||[]).map(d=>({...d,correct_pos:-1,isDistractor:true}))];
+    // 셔플
+    for(let i=allBlocks.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[allBlocks[i],allBlocks[j]]=[allBlocks[j],allBlocks[i]]}
+
+    const state={blocks:allBlocks,slots:new Array(item.blocks.length).fill(null),checked:false};
+    itemStates.push(state);
+
+    const div=document.createElement('div');
+    div.className='ws-item';
+    div.id='item-'+idx;
+    div.innerHTML=`
+      <div class="ws-item-header">
+        <span class="ws-item-num">#${idx+1}</span>
+        <span class="ws-item-ko">${item.translation}</span>
+      </div>
+      <div class="ws-item-body">
+        <div class="block-bank" id="bank-${idx}">
+          <div class="block-bank-label">🧱 블록을 클릭하세요</div>
+          ${allBlocks.map((b,bi)=>`<div class="block ${ROLE_CLASS[b.role]||'block-distractor'}" data-item="${idx}" data-bidx="${bi}" onclick="pickBlock(${idx},${bi})">${b.word}</div>`).join('')}
+        </div>
+        <div class="slots" id="slots-${idx}">
+          ${item.blocks.map((_,si)=>`<div class="slot" id="slot-${idx}-${si}" data-item="${idx}" data-sidx="${si}" onclick="unpickSlot(${idx},${si})"><span style="font-family:Caveat;font-size:16px">①②③④⑤⑥⑦⑧⑨⑩</span></div>`).join('')}
+        </div>
+      </div>
+    `;
+    ws.appendChild(div);
+
+    // 슬롯 번호 표시
+    div.querySelectorAll('.slot').forEach((s,si)=>{
+      s.innerHTML=`<span style="font-family:'Caveat',cursive;font-size:16px;color:var(--ink-mute)">${'①②③④⑤⑥⑦⑧⑨⑩'[si]||si+1}</span>`;
+    });
+  });
+}
+
+// ═══ INTERACTION ═══
+function pickBlock(itemIdx,blockIdx){
+  const state=itemStates[itemIdx];
+  if(state.checked)return;
+  const slotIdx=state.slots.indexOf(null);
+  if(slotIdx===-1)return;
+
+  state.slots[slotIdx]=blockIdx;
+  const block=state.blocks[blockIdx];
+
+  // bank에서 숨기기
+  const bankBlocks=document.querySelectorAll(`#bank-${itemIdx} .block`);
+  bankBlocks[blockIdx].classList.add('placed');
+
+  // slot에 블록 넣기
+  const slot=document.getElementById(`slot-${itemIdx}-${slotIdx}`);
+  slot.innerHTML=`<div class="block ${ROLE_CLASS[block.role]||'block-distractor'}" style="cursor:pointer">${block.word}</div>`;
+  slot.classList.add('filled');
+}
+
+function unpickSlot(itemIdx,slotIdx){
+  const state=itemStates[itemIdx];
+  if(state.checked)return;
+  const blockIdx=state.slots[slotIdx];
+  if(blockIdx===null)return;
+
+  state.slots[slotIdx]=null;
+
+  // bank에서 복원
+  const bankBlocks=document.querySelectorAll(`#bank-${itemIdx} .block`);
+  bankBlocks[blockIdx].classList.remove('placed');
+
+  // slot 비우기
+  const slot=document.getElementById(`slot-${itemIdx}-${slotIdx}`);
+  slot.innerHTML=`<span style="font-family:'Caveat',cursive;font-size:16px;color:var(--ink-mute)">${'①②③④⑤⑥⑦⑧⑨⑩'[slotIdx]}</span>`;
+  slot.classList.remove('filled','correct','wrong');
+}
+
+// ═══ CHECK ═══
+function checkAll(){
+  let correct=0,total=currentData.items.length;
+
+  currentData.items.forEach((item,idx)=>{
+    const state=itemStates[idx];
+    state.checked=true;
+    let itemCorrect=true;
+
+    item.blocks.forEach((_,si)=>{
+      const slot=document.getElementById(`slot-${idx}-${si}`);
+      const placedIdx=state.slots[si];
+      if(placedIdx===null){slot.classList.add('wrong');itemCorrect=false;return}
+
+      const placedBlock=state.blocks[placedIdx];
+      const expectedWord=item.blocks[si].word;
+
+      if(placedBlock.word===expectedWord){
+        slot.classList.add('correct');
+      }else{
+        slot.classList.add('wrong');
+        itemCorrect=false;
+      }
+    });
+
+    if(itemCorrect)correct++;
+  });
+
+  document.getElementById('score-num').textContent=correct+'/'+total;
+  document.getElementById('score-bar').classList.add('show');
+
+  if(correct===total)celebrate();
+  toast(correct===total?'🎉 전부 정답!':correct+'/'+total+' 정답');
+}
+
+function resetAll(){
+  if(!currentData)return;
+  renderWorksheet();
+  toast('다시 풀기');
+}
+
+// ═══ CELEBRATION ═══
+function celebrate(){
+  const el=document.getElementById('celebration');
+  el.innerHTML='';el.classList.add('show');
+  const colors=['#E8734A','#5B9BD5','#6BBF8A','#9B7ED8','#F4C84B','#E88BAF'];
+  for(let i=0;i<60;i++){
+    const c=document.createElement('div');c.className='confetti';
+    c.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*-20}%;background:${colors[i%colors.length]};width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;animation-delay:${Math.random()*.5}s;animation-duration:${1.5+Math.random()}s;border-radius:${Math.random()>.5?'50%':'2px'}`;
+    el.appendChild(c);
+  }
+  setTimeout(()=>{el.classList.remove('show');el.innerHTML=''},3000);
+}
+
+// Ctrl+Enter
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter')generate()});
+</script>
+</body>
+</html>
