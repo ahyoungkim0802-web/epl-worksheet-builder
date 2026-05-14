@@ -14,6 +14,7 @@
   --blue:#5B9BD5;--green:#6BBF8A;--purple:#9B7ED8;--yellow:#F4C84B;--pink:#E88BAF;--red:#E85D5D;
   --shadow:0 2px 8px rgba(0,0,0,.08);--shadow-block:0 3px 0 rgba(0,0,0,.12);
   --radius:12px;--radius-block:8px;
+  --sidebar-w:280px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--ink);font-family:'Pretendard',sans-serif;font-size:15px;line-height:1.6;min-height:100vh}
@@ -23,10 +24,40 @@ body{background:var(--bg);color:var(--ink);font-family:'Pretendard',sans-serif;f
 .header-brand{font-family:'Gowun Batang',serif;font-weight:700;font-size:22px;color:var(--ink)}
 .header-brand em{font-family:'Caveat',cursive;font-style:normal;color:var(--accent);font-size:26px}
 .header-sub{font-size:12px;color:var(--ink-mute)}
-.header-actions{display:flex;gap:8px}
+.header-actions{display:flex;gap:8px;align-items:center}
+
+/* Layout */
+.app-layout{display:flex;min-height:calc(100vh - 65px)}
+
+/* Sidebar */
+.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--bg-card);border-right:1px solid var(--bg-deep);overflow-y:auto;height:calc(100vh - 65px);position:sticky;top:65px;transition:margin-left .3s;z-index:50}
+.sidebar.collapsed{margin-left:calc(-1 * var(--sidebar-w))}
+.sidebar-toggle{background:var(--bg-deep);border:none;padding:8px 12px;cursor:pointer;font-size:16px;border-radius:var(--radius-block);font-family:inherit;font-weight:600;color:var(--ink-soft);transition:background .15s}
+.sidebar-toggle:hover{background:#ebe2d0}
+
+/* Progress bar */
+.sidebar-progress{padding:16px;border-bottom:1px solid var(--bg-deep)}
+.sidebar-progress-label{font-size:11px;font-weight:700;color:var(--ink-mute);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.progress-track{height:8px;background:var(--bg-deep);border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;background:var(--green);border-radius:4px;transition:width .4s ease}
+.progress-text{font-size:11px;color:var(--ink-mute);margin-top:4px;text-align:right}
+
+/* Curriculum tree */
+.cur-chapter{border-bottom:1px solid var(--bg-deep)}
+.cur-chapter-title{padding:12px 16px;font-weight:700;font-size:13px;color:var(--ink);cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;transition:background .15s}
+.cur-chapter-title:hover{background:var(--bg)}
+.cur-chapter-title .arrow{transition:transform .2s;font-size:10px;color:var(--ink-mute)}
+.cur-chapter.open .arrow{transform:rotate(90deg)}
+.cur-items{display:none;padding-bottom:4px}
+.cur-chapter.open .cur-items{display:block}
+.cur-item{padding:8px 16px 8px 28px;font-size:13px;color:var(--ink-soft);cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:all .15s;border-left:3px solid transparent}
+.cur-item:hover{background:var(--bg);color:var(--ink)}
+.cur-item.active{background:var(--bg);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.cur-item .done-mark{color:var(--green);font-weight:700;font-size:14px}
+.cur-item .prob-count{font-size:10px;color:var(--ink-mute);background:var(--bg-deep);padding:2px 6px;border-radius:10px}
 
 /* Controls Bar */
-.controls{background:var(--bg-card);border-bottom:1px solid var(--bg-deep);padding:16px 24px;display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end}
+.controls{background:var(--bg-card);border-bottom:1px solid var(--bg-deep);padding:12px 24px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
 .ctrl{display:flex;flex-direction:column;gap:4px}
 .ctrl label{font-size:11px;font-weight:600;color:var(--ink-mute);text-transform:uppercase;letter-spacing:.06em}
 .ctrl input,.ctrl select{padding:8px 12px;border:1.5px solid var(--bg-deep);border-radius:var(--radius-block);font-family:inherit;font-size:14px;background:var(--bg);outline:none;transition:border-color .15s}
@@ -37,9 +68,16 @@ body{background:var(--bg);color:var(--ink);font-family:'Pretendard',sans-serif;f
 .btn-primary{background:var(--accent);color:#fff;box-shadow:0 3px 0 #c45a30}.btn-primary:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 4px 0 #c45a30}
 .btn-secondary{background:var(--bg-deep);color:var(--ink)}.btn-secondary:hover{background:#ebe2d0}
 .btn-success{background:var(--green);color:#fff;box-shadow:0 3px 0 #4ea06a}
+.btn-sm{padding:6px 14px;font-size:12px}
 
-/* Main */
-.main{max-width:900px;margin:0 auto;padding:24px}
+/* Main content area */
+.main-wrap{flex:1;min-width:0;display:flex;flex-direction:column}
+.main{max-width:900px;margin:0 auto;padding:24px;width:100%}
+
+/* Unit header */
+.unit-header{background:var(--bg-card);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 24px;margin-bottom:20px}
+.unit-header h2{font-family:'Gowun Batang',serif;font-size:20px;color:var(--ink);margin-bottom:4px}
+.unit-header .unit-chapter{font-size:12px;color:var(--ink-mute)}
 
 /* Worksheet Item */
 .ws-item{background:var(--bg-card);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden;transition:all .3s}
@@ -71,7 +109,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Pretendard',sans-serif;f
 .slot{min-width:60px;min-height:40px;border:2px dashed var(--ink-mute);border-radius:var(--radius-block);display:flex;align-items:center;justify-content:center;padding:6px 12px;font-size:12px;color:var(--ink-mute);transition:all .2s;position:relative}
 .slot.filled{border-style:solid;border-color:var(--accent-soft)}
 .slot.correct{border-color:var(--green);background:rgba(107,191,138,.1)}
-.slot.correct::before{content:'✓';position:absolute;top:-8px;right:-8px;background:var(--green);color:#fff;width:18px;height:18px;border-radius:50%;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.slot.correct::before{content:'';position:absolute;top:-8px;right:-8px;background:var(--green);color:#fff;width:18px;height:18px;border-radius:50%;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
 .slot.wrong{border-color:var(--red);background:rgba(232,93,93,.08);animation:shake .4s ease}
 .slot .block{margin:0}
 .slot .block::after{display:none}
@@ -96,19 +134,20 @@ body{background:var(--bg);color:var(--ink);font-family:'Pretendard',sans-serif;f
 .loading .dot:nth-child(2){animation-delay:.1s}.loading .dot:nth-child(3){animation-delay:.2s}
 @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 
-/* Sample chips */
-.sample-bar{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
-.sample-chip{padding:8px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--bg-deep);background:var(--bg-card);color:var(--ink-soft);transition:all .15s}
-.sample-chip:hover{border-color:var(--accent);color:var(--accent)}
-
 /* Toast */
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--ink);color:#fff;padding:10px 24px;border-radius:var(--radius-block);font-size:13px;font-weight:600;z-index:9999;transition:transform .3s;pointer-events:none}
 .toast.show{transform:translateX(-50%) translateY(0)}
 
+/* Welcome */
+.welcome{text-align:center;padding:60px 24px;color:var(--ink-mute)}
+.welcome h3{font-family:'Gowun Batang',serif;font-size:22px;color:var(--ink);margin-bottom:8px}
+.welcome p{font-size:14px;max-width:400px;margin:0 auto}
+
 /* Print */
 @media print{
-  .header,.controls,.btn,.sample-bar,.score-bar,.block-bank-label,.toast{display:none!important}
+  .header,.controls,.btn,.score-bar,.block-bank-label,.toast,.sidebar,.sidebar-toggle,.unit-header{display:none!important}
   body{background:#fff}
+  .app-layout{display:block}
   .ws-item{box-shadow:none;border:1px solid #ddd;break-inside:avoid}
   .block-bank{border:1px solid #ccc}
   .slots{background:#f5f5f5}
@@ -120,7 +159,9 @@ body{background:var(--bg);color:var(--ink);font-family:'Pretendard',sans-serif;f
 .print-header .meta{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-mute);margin-top:8px}
 
 /* Mobile */
-@media(max-width:640px){
+@media(max-width:768px){
+  .sidebar{position:fixed;left:0;top:65px;height:calc(100vh - 65px);z-index:90;box-shadow:4px 0 20px rgba(0,0,0,.15)}
+  .sidebar.collapsed{margin-left:calc(-1 * var(--sidebar-w))}
   .controls{flex-direction:column;gap:10px}
   .ctrl{width:100%}
   .ctrl input,.ctrl select{width:100%}
@@ -131,48 +172,58 @@ body{background:var(--bg);color:var(--ink);font-family:'Pretendard',sans-serif;f
 <body>
 
 <div class="header">
-  <div>
-    <div class="header-brand"><em>EPL</em> Worksheet Builder</div>
-    <div class="header-sub">LEGO 블록으로 영어 문장 만들기</div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">&#9776;</button>
+    <div>
+      <div class="header-brand"><em>EPL</em> Worksheet Builder</div>
+      <div class="header-sub">LEGO 블록으로 영어 문장 만들기</div>
+    </div>
   </div>
   <div class="header-actions">
-    <button class="btn btn-secondary" onclick="window.print()">🖨 인쇄</button>
+    <button class="btn btn-primary btn-sm" id="ai-btn" onclick="generateAI()">AI로 추가 문제</button>
+    <button class="btn btn-success btn-sm" id="check-btn" onclick="checkAll()" style="display:none">&#10003; 정답 확인</button>
+    <button class="btn btn-secondary btn-sm" id="reset-btn" onclick="resetAll()" style="display:none">&#8635; 다시 풀기</button>
+    <button class="btn btn-secondary btn-sm" onclick="window.print()">&#128424; 인쇄</button>
   </div>
 </div>
 
-<div class="controls">
-  <div class="ctrl"><label>주제</label><input id="c-topic" placeholder="예: 동물, 음식, 학교" value="동물"></div>
-  <div class="ctrl"><label>레벨</label><select id="c-level"><option>Beginner</option><option selected>Intermediate</option><option>Advanced</option></select></div>
-  <div class="ctrl"><label>문항 수</label><select id="c-count"><option>3</option><option selected>5</option><option>8</option></select></div>
-  <div class="ctrl"><label>방해 블록</label><select id="c-distract"><option value="1">포함</option><option value="0">없음</option></select></div>
-  <button class="btn btn-primary" id="gen-btn" onclick="generate()">🧱 워크시트 만들기</button>
-  <button class="btn btn-success" id="check-btn" onclick="checkAll()" style="display:none">✓ 정답 확인</button>
-  <button class="btn btn-secondary" id="reset-btn" onclick="resetAll()" style="display:none">↻ 다시 풀기</button>
-</div>
+<div class="app-layout">
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-progress">
+      <div class="sidebar-progress-label">학습 진행률</div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+      <div class="progress-text" id="progress-text">0 / 0 완료</div>
+    </div>
+    <div id="sidebar-tree"></div>
+  </nav>
 
-<div class="main">
-  <div class="print-header">
-    <h1 id="print-title">EPL영어학원 · 영어 문장 만들기</h1>
-    <div class="meta"><span>이름: _______________</span><span>날짜: _______________</span></div>
-  </div>
+  <div class="main-wrap">
+    <div class="controls" id="controls-bar" style="display:none">
+    </div>
+    <div class="main">
+      <div class="print-header">
+        <h1 id="print-title">EPL영어학원 - 영어 문장 만들기</h1>
+        <div class="meta"><span>이름: _______________</span><span>날짜: _______________</span></div>
+      </div>
 
-  <div class="sample-bar">
-    <span style="font-size:12px;color:var(--ink-mute);align-self:center">샘플:</span>
-    <div class="sample-chip" onclick="loadSample(0)">🐱 Beginner</div>
-    <div class="sample-chip" onclick="loadSample(1)">📚 Intermediate</div>
-    <div class="sample-chip" onclick="loadSample(2)">🏫 Advanced</div>
-  </div>
+      <div class="loading" id="loading" style="display:none">
+        <div><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+        <div style="margin-top:12px">블록을 조립하는 중...</div>
+      </div>
 
-  <div class="loading" id="loading" style="display:none">
-    <div><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-    <div style="margin-top:12px">블록을 조립하는 중...</div>
-  </div>
+      <div id="unit-header-area"></div>
+      <div id="worksheet">
+        <div class="welcome">
+          <h3>왼쪽 메뉴에서 단원을 선택하세요</h3>
+          <p>4개의 장, 40개 이상의 단원, 100개 이상의 문장 조립 문제가 준비되어 있습니다.</p>
+        </div>
+      </div>
 
-  <div id="worksheet"></div>
-
-  <div class="score-bar" id="score-bar">
-    <div class="score-num" id="score-num">0/0</div>
-    <div class="score-label">정답률</div>
+      <div class="score-bar" id="score-bar">
+        <div class="score-num" id="score-num">0/0</div>
+        <div class="score-label">정답률</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -183,65 +234,513 @@ body{background:var(--bg);color:var(--ink);font-family:'Pretendard',sans-serif;f
 const WORKER_URL='https://bitter-leaf-eb4d.ahyoungkim0802.workers.dev';
 const ROLE_CLASS={det:'block-det',subject:'block-subject',verb:'block-verb',object:'block-object',modifier:'block-modifier',prep:'block-prep',distractor:'block-distractor'};
 const ROLE_LABEL={det:'관사',subject:'주어',verb:'동사',object:'목적어',modifier:'수식어',prep:'전치사'};
+const STORAGE_KEY='epl-wb-progress';
 
 let currentData=null;
+let currentUnitKey=null;
 let itemStates=[];
 
 function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),1800)}
 
-// ═══ SAMPLE DATA ═══
-const SAMPLES=[
-  {title:"🐱 동물 문장 만들기 (Beginner)",items:[
-    {target:"The cat runs.",translation:"고양이가 달린다.",blocks:[{word:"The",role:"det",correct_pos:0},{word:"cat",role:"subject",correct_pos:1},{word:"runs",role:"verb",correct_pos:2}],distractors:[{word:"dog",role:"subject"}]},
-    {target:"I like apples.",translation:"나는 사과를 좋아한다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"like",role:"verb",correct_pos:1},{word:"apples",role:"object",correct_pos:2}],distractors:[{word:"eat",role:"verb"}]},
-    {target:"She is happy.",translation:"그녀는 행복하다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"happy",role:"modifier",correct_pos:2}],distractors:[{word:"sad",role:"modifier"}]},
-    {target:"Birds fly high.",translation:"새들은 높이 난다.",blocks:[{word:"Birds",role:"subject",correct_pos:0},{word:"fly",role:"verb",correct_pos:1},{word:"high",role:"modifier",correct_pos:2}],distractors:[]},
-    {target:"He reads books.",translation:"그는 책을 읽는다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"reads",role:"verb",correct_pos:1},{word:"books",role:"object",correct_pos:2}],distractors:[{word:"writes",role:"verb"}]}
-  ]},
-  {title:"📚 학교 문장 만들기 (Intermediate)",items:[
-    {target:"The book is on the table.",translation:"책은 테이블 위에 있다.",blocks:[{word:"The",role:"det",correct_pos:0},{word:"book",role:"subject",correct_pos:1},{word:"is",role:"verb",correct_pos:2},{word:"on",role:"prep",correct_pos:3},{word:"the",role:"det",correct_pos:4},{word:"table",role:"object",correct_pos:5}],distractors:[{word:"under",role:"prep"}]},
-    {target:"We go to school.",translation:"우리는 학교에 간다.",blocks:[{word:"We",role:"subject",correct_pos:0},{word:"go",role:"verb",correct_pos:1},{word:"to",role:"prep",correct_pos:2},{word:"school",role:"object",correct_pos:3}],distractors:[{word:"home",role:"object"}]},
-    {target:"She plays the piano.",translation:"그녀는 피아노를 친다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"plays",role:"verb",correct_pos:1},{word:"the",role:"det",correct_pos:2},{word:"piano",role:"object",correct_pos:3}],distractors:[{word:"guitar",role:"object"}]},
-    {target:"They eat lunch at noon.",translation:"그들은 정오에 점심을 먹는다.",blocks:[{word:"They",role:"subject",correct_pos:0},{word:"eat",role:"verb",correct_pos:1},{word:"lunch",role:"object",correct_pos:2},{word:"at",role:"prep",correct_pos:3},{word:"noon",role:"modifier",correct_pos:4}],distractors:[]},
-    {target:"My dog is very cute.",translation:"내 강아지는 매우 귀엽다.",blocks:[{word:"My",role:"det",correct_pos:0},{word:"dog",role:"subject",correct_pos:1},{word:"is",role:"verb",correct_pos:2},{word:"very",role:"modifier",correct_pos:3},{word:"cute",role:"modifier",correct_pos:4}],distractors:[{word:"big",role:"modifier"}]}
-  ]},
-  {title:"🏫 복합 문장 만들기 (Advanced)",items:[
-    {target:"I want to eat pizza.",translation:"나는 피자를 먹고 싶다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"want",role:"verb",correct_pos:1},{word:"to",role:"prep",correct_pos:2},{word:"eat",role:"verb",correct_pos:3},{word:"pizza",role:"object",correct_pos:4}],distractors:[{word:"drink",role:"verb"}]},
-    {target:"She is reading a book in the library.",translation:"그녀는 도서관에서 책을 읽고 있다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"reading",role:"verb",correct_pos:2},{word:"a",role:"det",correct_pos:3},{word:"book",role:"object",correct_pos:4},{word:"in",role:"prep",correct_pos:5},{word:"the",role:"det",correct_pos:6},{word:"library",role:"object",correct_pos:7}],distractors:[{word:"park",role:"object"}]},
-    {target:"He can swim very fast.",translation:"그는 매우 빠르게 수영할 수 있다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"can",role:"verb",correct_pos:1},{word:"swim",role:"verb",correct_pos:2},{word:"very",role:"modifier",correct_pos:3},{word:"fast",role:"modifier",correct_pos:4}],distractors:[{word:"slowly",role:"modifier"}]},
-    {target:"We should study hard for the test.",translation:"우리는 시험을 위해 열심히 공부해야 한다.",blocks:[{word:"We",role:"subject",correct_pos:0},{word:"should",role:"verb",correct_pos:1},{word:"study",role:"verb",correct_pos:2},{word:"hard",role:"modifier",correct_pos:3},{word:"for",role:"prep",correct_pos:4},{word:"the",role:"det",correct_pos:5},{word:"test",role:"object",correct_pos:6}],distractors:[{word:"easy",role:"modifier"}]},
-    {target:"The children are playing in the park.",translation:"아이들은 공원에서 놀고 있다.",blocks:[{word:"The",role:"det",correct_pos:0},{word:"children",role:"subject",correct_pos:1},{word:"are",role:"verb",correct_pos:2},{word:"playing",role:"verb",correct_pos:3},{word:"in",role:"prep",correct_pos:4},{word:"the",role:"det",correct_pos:5},{word:"park",role:"object",correct_pos:6}],distractors:[{word:"garden",role:"object"}]}
-  ]}
-];
+// ═══════════════════════════════════════════
+// CURRICULUM DATA
+// ═══════════════════════════════════════════
+const CURRICULUM = {
+  "ch1": {
+    title: "제1장 영문법의 효과적인 학습법",
+    units: {
+      "meaning-order": {
+        title: "의미순으로 이해하기",
+        exercises: [
+          {target:"I eat breakfast.",translation:"나는 아침을 먹는다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"eat",role:"verb",correct_pos:1},{word:"breakfast",role:"object",correct_pos:2}],distractors:[]},
+          {target:"She likes music.",translation:"그녀는 음악을 좋아한다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"likes",role:"verb",correct_pos:1},{word:"music",role:"object",correct_pos:2}],distractors:[]},
+          {target:"We go to school.",translation:"우리는 학교에 간다.",blocks:[{word:"We",role:"subject",correct_pos:0},{word:"go",role:"verb",correct_pos:1},{word:"to",role:"prep",correct_pos:2},{word:"school",role:"object",correct_pos:3}],distractors:[]},
+          {target:"He is my friend.",translation:"그는 나의 친구이다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"my",role:"det",correct_pos:2},{word:"friend",role:"object",correct_pos:3}],distractors:[]},
+          {target:"They play in the park.",translation:"그들은 공원에서 논다.",blocks:[{word:"They",role:"subject",correct_pos:0},{word:"play",role:"verb",correct_pos:1},{word:"in",role:"prep",correct_pos:2},{word:"the",role:"det",correct_pos:3},{word:"park",role:"object",correct_pos:4}],distractors:[]}
+        ]
+      }
+    }
+  },
+  "ch2": {
+    title: "제2장 문장 형식",
+    units: {
+      "sv": {
+        title: "1형식 (SV)",
+        exercises: [
+          {target:"Birds fly.",translation:"새들이 날다.",blocks:[{word:"Birds",role:"subject",correct_pos:0},{word:"fly",role:"verb",correct_pos:1}],distractors:[]},
+          {target:"She smiled.",translation:"그녀가 웃었다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"smiled",role:"verb",correct_pos:1}],distractors:[]},
+          {target:"The baby cried.",translation:"아기가 울었다.",blocks:[{word:"The",role:"det",correct_pos:0},{word:"baby",role:"subject",correct_pos:1},{word:"cried",role:"verb",correct_pos:2}],distractors:[]},
+          {target:"Time flies.",translation:"시간이 날아간다.",blocks:[{word:"Time",role:"subject",correct_pos:0},{word:"flies",role:"verb",correct_pos:1}],distractors:[]},
+          {target:"He runs fast.",translation:"그는 빨리 달린다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"runs",role:"verb",correct_pos:1},{word:"fast",role:"modifier",correct_pos:2}],distractors:[]}
+        ]
+      },
+      "svc": {
+        title: "2형식 (SVC)",
+        exercises: [
+          {target:"She is happy.",translation:"그녀는 행복하다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"happy",role:"modifier",correct_pos:2}],distractors:[]},
+          {target:"The soup tastes good.",translation:"그 수프는 맛있다.",blocks:[{word:"The",role:"det",correct_pos:0},{word:"soup",role:"subject",correct_pos:1},{word:"tastes",role:"verb",correct_pos:2},{word:"good",role:"modifier",correct_pos:3}],distractors:[]},
+          {target:"He looks tired.",translation:"그는 피곤해 보인다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"looks",role:"verb",correct_pos:1},{word:"tired",role:"modifier",correct_pos:2}],distractors:[]},
+          {target:"I am a student.",translation:"나는 학생이다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"am",role:"verb",correct_pos:1},{word:"a",role:"det",correct_pos:2},{word:"student",role:"object",correct_pos:3}],distractors:[]},
+          {target:"The flower smells sweet.",translation:"그 꽃은 달콤한 향이 난다.",blocks:[{word:"The",role:"det",correct_pos:0},{word:"flower",role:"subject",correct_pos:1},{word:"smells",role:"verb",correct_pos:2},{word:"sweet",role:"modifier",correct_pos:3}],distractors:[]}
+        ]
+      },
+      "svo": {
+        title: "3형식 (SVO)",
+        exercises: [
+          {target:"I like apples.",translation:"나는 사과를 좋아한다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"like",role:"verb",correct_pos:1},{word:"apples",role:"object",correct_pos:2}],distractors:[]},
+          {target:"She reads books.",translation:"그녀는 책을 읽는다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"reads",role:"verb",correct_pos:1},{word:"books",role:"object",correct_pos:2}],distractors:[]},
+          {target:"They play soccer.",translation:"그들은 축구를 한다.",blocks:[{word:"They",role:"subject",correct_pos:0},{word:"play",role:"verb",correct_pos:1},{word:"soccer",role:"object",correct_pos:2}],distractors:[]},
+          {target:"He eats lunch.",translation:"그는 점심을 먹는다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"eats",role:"verb",correct_pos:1},{word:"lunch",role:"object",correct_pos:2}],distractors:[]},
+          {target:"We study English.",translation:"우리는 영어를 공부한다.",blocks:[{word:"We",role:"subject",correct_pos:0},{word:"study",role:"verb",correct_pos:1},{word:"English",role:"object",correct_pos:2}],distractors:[]}
+        ]
+      },
+      "svoo": {
+        title: "4형식 (SVOO)",
+        exercises: [
+          {target:"She gave me a book.",translation:"그녀는 나에게 책을 주었다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"gave",role:"verb",correct_pos:1},{word:"me",role:"object",correct_pos:2},{word:"a",role:"det",correct_pos:3},{word:"book",role:"object",correct_pos:4}],distractors:[]},
+          {target:"He told us a story.",translation:"그는 우리에게 이야기를 했다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"told",role:"verb",correct_pos:1},{word:"us",role:"object",correct_pos:2},{word:"a",role:"det",correct_pos:3},{word:"story",role:"object",correct_pos:4}],distractors:[]},
+          {target:"Mom made me breakfast.",translation:"엄마가 나에게 아침을 만들었다.",blocks:[{word:"Mom",role:"subject",correct_pos:0},{word:"made",role:"verb",correct_pos:1},{word:"me",role:"object",correct_pos:2},{word:"breakfast",role:"object",correct_pos:3}],distractors:[]},
+          {target:"I bought her a gift.",translation:"나는 그녀에게 선물을 샀다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"bought",role:"verb",correct_pos:1},{word:"her",role:"object",correct_pos:2},{word:"a",role:"det",correct_pos:3},{word:"gift",role:"object",correct_pos:4}],distractors:[]},
+          {target:"He teaches us math.",translation:"그는 우리에게 수학을 가르친다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"teaches",role:"verb",correct_pos:1},{word:"us",role:"object",correct_pos:2},{word:"math",role:"object",correct_pos:3}],distractors:[]}
+        ]
+      },
+      "svoc": {
+        title: "5형식 (SVOC)",
+        exercises: [
+          {target:"They call him Tom.",translation:"그들은 그를 톰이라 부른다.",blocks:[{word:"They",role:"subject",correct_pos:0},{word:"call",role:"verb",correct_pos:1},{word:"him",role:"object",correct_pos:2},{word:"Tom",role:"modifier",correct_pos:3}],distractors:[]},
+          {target:"She made me happy.",translation:"그녀는 나를 행복하게 했다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"made",role:"verb",correct_pos:1},{word:"me",role:"object",correct_pos:2},{word:"happy",role:"modifier",correct_pos:3}],distractors:[]},
+          {target:"I found the book interesting.",translation:"나는 그 책이 흥미롭다고 느꼈다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"found",role:"verb",correct_pos:1},{word:"the",role:"det",correct_pos:2},{word:"book",role:"object",correct_pos:3},{word:"interesting",role:"modifier",correct_pos:4}],distractors:[]},
+          {target:"We elected him president.",translation:"우리는 그를 회장으로 선출했다.",blocks:[{word:"We",role:"subject",correct_pos:0},{word:"elected",role:"verb",correct_pos:1},{word:"him",role:"object",correct_pos:2},{word:"president",role:"modifier",correct_pos:3}],distractors:[]},
+          {target:"He kept the room clean.",translation:"그는 방을 깨끗하게 유지했다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"kept",role:"verb",correct_pos:1},{word:"the",role:"det",correct_pos:2},{word:"room",role:"object",correct_pos:3},{word:"clean",role:"modifier",correct_pos:4}],distractors:[]}
+        ]
+      },
+      "there": {
+        title: "There 구문",
+        exercises: [
+          {target:"There is a book on the desk.",translation:"책상 위에 책이 있다.",blocks:[{word:"There",role:"subject",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"a",role:"det",correct_pos:2},{word:"book",role:"object",correct_pos:3},{word:"on",role:"prep",correct_pos:4},{word:"the",role:"det",correct_pos:5},{word:"desk",role:"object",correct_pos:6}],distractors:[]},
+          {target:"There are many students.",translation:"많은 학생들이 있다.",blocks:[{word:"There",role:"subject",correct_pos:0},{word:"are",role:"verb",correct_pos:1},{word:"many",role:"modifier",correct_pos:2},{word:"students",role:"object",correct_pos:3}],distractors:[]},
+          {target:"There was a cat here.",translation:"여기에 고양이가 있었다.",blocks:[{word:"There",role:"subject",correct_pos:0},{word:"was",role:"verb",correct_pos:1},{word:"a",role:"det",correct_pos:2},{word:"cat",role:"object",correct_pos:3},{word:"here",role:"modifier",correct_pos:4}],distractors:[]},
+          {target:"There will be a party.",translation:"파티가 있을 것이다.",blocks:[{word:"There",role:"subject",correct_pos:0},{word:"will",role:"verb",correct_pos:1},{word:"be",role:"verb",correct_pos:2},{word:"a",role:"det",correct_pos:3},{word:"party",role:"object",correct_pos:4}],distractors:[]},
+          {target:"There are two dogs in the yard.",translation:"마당에 개 두 마리가 있다.",blocks:[{word:"There",role:"subject",correct_pos:0},{word:"are",role:"verb",correct_pos:1},{word:"two",role:"modifier",correct_pos:2},{word:"dogs",role:"object",correct_pos:3},{word:"in",role:"prep",correct_pos:4},{word:"the",role:"det",correct_pos:5},{word:"yard",role:"object",correct_pos:6}],distractors:[]}
+        ]
+      },
+      "declarative": {
+        title: "평서문 (긍정문/부정문)",
+        exercises: [
+          {target:"I do not like coffee.",translation:"나는 커피를 좋아하지 않는다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"do",role:"verb",correct_pos:1},{word:"not",role:"modifier",correct_pos:2},{word:"like",role:"verb",correct_pos:3},{word:"coffee",role:"object",correct_pos:4}],distractors:[]},
+          {target:"She is not tired.",translation:"그녀는 피곤하지 않다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"not",role:"modifier",correct_pos:2},{word:"tired",role:"modifier",correct_pos:3}],distractors:[]},
+          {target:"They cannot swim.",translation:"그들은 수영할 수 없다.",blocks:[{word:"They",role:"subject",correct_pos:0},{word:"cannot",role:"verb",correct_pos:1},{word:"swim",role:"verb",correct_pos:2}],distractors:[]},
+          {target:"He does not eat meat.",translation:"그는 고기를 먹지 않는다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"does",role:"verb",correct_pos:1},{word:"not",role:"modifier",correct_pos:2},{word:"eat",role:"verb",correct_pos:3},{word:"meat",role:"object",correct_pos:4}],distractors:[]},
+          {target:"We will not go.",translation:"우리는 가지 않을 것이다.",blocks:[{word:"We",role:"subject",correct_pos:0},{word:"will",role:"verb",correct_pos:1},{word:"not",role:"modifier",correct_pos:2},{word:"go",role:"verb",correct_pos:3}],distractors:[]}
+        ]
+      },
+      "interrogative": {
+        title: "의문문",
+        exercises: [
+          {target:"Do you like pizza?",translation:"너는 피자를 좋아하니?",blocks:[{word:"Do",role:"verb",correct_pos:0},{word:"you",role:"subject",correct_pos:1},{word:"like",role:"verb",correct_pos:2},{word:"pizza",role:"object",correct_pos:3}],distractors:[]},
+          {target:"Where is the library?",translation:"도서관은 어디에 있나요?",blocks:[{word:"Where",role:"modifier",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"the",role:"det",correct_pos:2},{word:"library",role:"subject",correct_pos:3}],distractors:[]},
+          {target:"What do you want?",translation:"너는 무엇을 원하니?",blocks:[{word:"What",role:"object",correct_pos:0},{word:"do",role:"verb",correct_pos:1},{word:"you",role:"subject",correct_pos:2},{word:"want",role:"verb",correct_pos:3}],distractors:[]},
+          {target:"Can she swim?",translation:"그녀는 수영할 수 있나요?",blocks:[{word:"Can",role:"verb",correct_pos:0},{word:"she",role:"subject",correct_pos:1},{word:"swim",role:"verb",correct_pos:2}],distractors:[]},
+          {target:"Did he finish?",translation:"그가 끝냈나요?",blocks:[{word:"Did",role:"verb",correct_pos:0},{word:"he",role:"subject",correct_pos:1},{word:"finish",role:"verb",correct_pos:2}],distractors:[]}
+        ]
+      },
+      "imperative": {
+        title: "명령문",
+        exercises: [
+          {target:"Open the door.",translation:"문을 열어라.",blocks:[{word:"Open",role:"verb",correct_pos:0},{word:"the",role:"det",correct_pos:1},{word:"door",role:"object",correct_pos:2}],distractors:[]},
+          {target:"Please sit down.",translation:"앉으세요.",blocks:[{word:"Please",role:"modifier",correct_pos:0},{word:"sit",role:"verb",correct_pos:1},{word:"down",role:"modifier",correct_pos:2}],distractors:[]},
+          {target:"Do not run here.",translation:"여기서 뛰지 마라.",blocks:[{word:"Do",role:"verb",correct_pos:0},{word:"not",role:"modifier",correct_pos:1},{word:"run",role:"verb",correct_pos:2},{word:"here",role:"modifier",correct_pos:3}],distractors:[]},
+          {target:"Be quiet.",translation:"조용히 해라.",blocks:[{word:"Be",role:"verb",correct_pos:0},{word:"quiet",role:"modifier",correct_pos:1}],distractors:[]},
+          {target:"Listen to me.",translation:"내 말을 들어라.",blocks:[{word:"Listen",role:"verb",correct_pos:0},{word:"to",role:"prep",correct_pos:1},{word:"me",role:"object",correct_pos:2}],distractors:[]}
+        ]
+      },
+      "exclamatory": {
+        title: "감탄문",
+        exercises: [
+          {target:"What a beautiful day!",translation:"정말 아름다운 날이구나!",blocks:[{word:"What",role:"modifier",correct_pos:0},{word:"a",role:"det",correct_pos:1},{word:"beautiful",role:"modifier",correct_pos:2},{word:"day",role:"object",correct_pos:3}],distractors:[]},
+          {target:"How tall he is!",translation:"그는 정말 키가 크구나!",blocks:[{word:"How",role:"modifier",correct_pos:0},{word:"tall",role:"modifier",correct_pos:1},{word:"he",role:"subject",correct_pos:2},{word:"is",role:"verb",correct_pos:3}],distractors:[]},
+          {target:"What a surprise!",translation:"정말 놀랍구나!",blocks:[{word:"What",role:"modifier",correct_pos:0},{word:"a",role:"det",correct_pos:1},{word:"surprise",role:"object",correct_pos:2}],distractors:[]},
+          {target:"How fast she runs!",translation:"그녀는 정말 빨리 달리는구나!",blocks:[{word:"How",role:"modifier",correct_pos:0},{word:"fast",role:"modifier",correct_pos:1},{word:"she",role:"subject",correct_pos:2},{word:"runs",role:"verb",correct_pos:3}],distractors:[]},
+          {target:"What a nice song!",translation:"정말 좋은 노래구나!",blocks:[{word:"What",role:"modifier",correct_pos:0},{word:"a",role:"det",correct_pos:1},{word:"nice",role:"modifier",correct_pos:2},{word:"song",role:"object",correct_pos:3}],distractors:[]}
+        ]
+      },
+      "simple-sent": {
+        title: "단문",
+        exercises: [
+          {target:"The sun rises.",translation:"태양이 뜬다.",blocks:[{word:"The",role:"det",correct_pos:0},{word:"sun",role:"subject",correct_pos:1},{word:"rises",role:"verb",correct_pos:2}],distractors:[]},
+          {target:"She sings well.",translation:"그녀는 노래를 잘 한다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"sings",role:"verb",correct_pos:1},{word:"well",role:"modifier",correct_pos:2}],distractors:[]},
+          {target:"I love my family.",translation:"나는 가족을 사랑한다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"love",role:"verb",correct_pos:1},{word:"my",role:"det",correct_pos:2},{word:"family",role:"object",correct_pos:3}],distractors:[]},
+          {target:"He drives carefully.",translation:"그는 조심히 운전한다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"drives",role:"verb",correct_pos:1},{word:"carefully",role:"modifier",correct_pos:2}],distractors:[]},
+          {target:"We finished the work.",translation:"우리는 일을 끝냈다.",blocks:[{word:"We",role:"subject",correct_pos:0},{word:"finished",role:"verb",correct_pos:1},{word:"the",role:"det",correct_pos:2},{word:"work",role:"object",correct_pos:3}],distractors:[]}
+        ]
+      },
+      "compound-sent": {
+        title: "중문",
+        exercises: [
+          {target:"I like tea and she likes coffee.",translation:"나는 차를 좋아하고 그녀는 커피를 좋아한다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"like",role:"verb",correct_pos:1},{word:"tea",role:"object",correct_pos:2},{word:"and",role:"prep",correct_pos:3},{word:"she",role:"subject",correct_pos:4},{word:"likes",role:"verb",correct_pos:5},{word:"coffee",role:"object",correct_pos:6}],distractors:[]},
+          {target:"He studied hard but he failed.",translation:"그는 열심히 공부했지만 실패했다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"studied",role:"verb",correct_pos:1},{word:"hard",role:"modifier",correct_pos:2},{word:"but",role:"prep",correct_pos:3},{word:"he",role:"subject",correct_pos:4},{word:"failed",role:"verb",correct_pos:5}],distractors:[]},
+          {target:"She sang and he danced.",translation:"그녀는 노래했고 그는 춤췄다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"sang",role:"verb",correct_pos:1},{word:"and",role:"prep",correct_pos:2},{word:"he",role:"subject",correct_pos:3},{word:"danced",role:"verb",correct_pos:4}],distractors:[]},
+          {target:"I was tired so I slept.",translation:"나는 피곤해서 잤다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"was",role:"verb",correct_pos:1},{word:"tired",role:"modifier",correct_pos:2},{word:"so",role:"prep",correct_pos:3},{word:"I",role:"subject",correct_pos:4},{word:"slept",role:"verb",correct_pos:5}],distractors:[]},
+          {target:"Run fast or you will be late.",translation:"빨리 뛰어라, 그렇지 않으면 늦을 거다.",blocks:[{word:"Run",role:"verb",correct_pos:0},{word:"fast",role:"modifier",correct_pos:1},{word:"or",role:"prep",correct_pos:2},{word:"you",role:"subject",correct_pos:3},{word:"will",role:"verb",correct_pos:4},{word:"be",role:"verb",correct_pos:5},{word:"late",role:"modifier",correct_pos:6}],distractors:[]}
+        ]
+      },
+      "complex-sent": {
+        title: "복문",
+        exercises: [
+          {target:"I know that he is kind.",translation:"나는 그가 친절하다는 것을 안다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"know",role:"verb",correct_pos:1},{word:"that",role:"prep",correct_pos:2},{word:"he",role:"subject",correct_pos:3},{word:"is",role:"verb",correct_pos:4},{word:"kind",role:"modifier",correct_pos:5}],distractors:[]},
+          {target:"When it rains I stay home.",translation:"비가 오면 나는 집에 있는다.",blocks:[{word:"When",role:"prep",correct_pos:0},{word:"it",role:"subject",correct_pos:1},{word:"rains",role:"verb",correct_pos:2},{word:"I",role:"subject",correct_pos:3},{word:"stay",role:"verb",correct_pos:4},{word:"home",role:"modifier",correct_pos:5}],distractors:[]},
+          {target:"If you study you will pass.",translation:"공부하면 합격할 것이다.",blocks:[{word:"If",role:"prep",correct_pos:0},{word:"you",role:"subject",correct_pos:1},{word:"study",role:"verb",correct_pos:2},{word:"you",role:"subject",correct_pos:3},{word:"will",role:"verb",correct_pos:4},{word:"pass",role:"verb",correct_pos:5}],distractors:[]},
+          {target:"Because she was sick she rested.",translation:"그녀가 아팠기 때문에 쉬었다.",blocks:[{word:"Because",role:"prep",correct_pos:0},{word:"she",role:"subject",correct_pos:1},{word:"was",role:"verb",correct_pos:2},{word:"sick",role:"modifier",correct_pos:3},{word:"she",role:"subject",correct_pos:4},{word:"rested",role:"verb",correct_pos:5}],distractors:[]},
+          {target:"I think that she is smart.",translation:"나는 그녀가 똑똑하다고 생각한다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"think",role:"verb",correct_pos:1},{word:"that",role:"prep",correct_pos:2},{word:"she",role:"subject",correct_pos:3},{word:"is",role:"verb",correct_pos:4},{word:"smart",role:"modifier",correct_pos:5}],distractors:[]}
+        ]
+      }
+    }
+  },
+  "ch3": {
+    title: "제3장 문법 사항",
+    units: {
+      "verbs": {
+        title: "동사",
+        exercises: [
+          {target:"She runs every day.",translation:"그녀는 매일 달린다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"runs",role:"verb",correct_pos:1},{word:"every",role:"modifier",correct_pos:2},{word:"day",role:"modifier",correct_pos:3}],distractors:[]},
+          {target:"I have a dog.",translation:"나는 개를 가지고 있다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"have",role:"verb",correct_pos:1},{word:"a",role:"det",correct_pos:2},{word:"dog",role:"object",correct_pos:3}],distractors:[]},
+          {target:"They want water.",translation:"그들은 물을 원한다.",blocks:[{word:"They",role:"subject",correct_pos:0},{word:"want",role:"verb",correct_pos:1},{word:"water",role:"object",correct_pos:2}],distractors:[]},
+          {target:"He knows the answer.",translation:"그는 답을 안다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"knows",role:"verb",correct_pos:1},{word:"the",role:"det",correct_pos:2},{word:"answer",role:"object",correct_pos:3}],distractors:[]},
+          {target:"We need help.",translation:"우리는 도움이 필요하다.",blocks:[{word:"We",role:"subject",correct_pos:0},{word:"need",role:"verb",correct_pos:1},{word:"help",role:"object",correct_pos:2}],distractors:[]}
+        ]
+      },
+      "tenses": {
+        title: "기본 시제",
+        exercises: [
+          {target:"I go to school.",translation:"나는 학교에 간다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"go",role:"verb",correct_pos:1},{word:"to",role:"prep",correct_pos:2},{word:"school",role:"object",correct_pos:3}],distractors:[]},
+          {target:"She went home.",translation:"그녀는 집에 갔다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"went",role:"verb",correct_pos:1},{word:"home",role:"modifier",correct_pos:2}],distractors:[]},
+          {target:"They will come tomorrow.",translation:"그들은 내일 올 것이다.",blocks:[{word:"They",role:"subject",correct_pos:0},{word:"will",role:"verb",correct_pos:1},{word:"come",role:"verb",correct_pos:2},{word:"tomorrow",role:"modifier",correct_pos:3}],distractors:[]},
+          {target:"He played tennis yesterday.",translation:"그는 어제 테니스를 쳤다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"played",role:"verb",correct_pos:1},{word:"tennis",role:"object",correct_pos:2},{word:"yesterday",role:"modifier",correct_pos:3}],distractors:[]},
+          {target:"We eat dinner at seven.",translation:"우리는 7시에 저녁을 먹는다.",blocks:[{word:"We",role:"subject",correct_pos:0},{word:"eat",role:"verb",correct_pos:1},{word:"dinner",role:"object",correct_pos:2},{word:"at",role:"prep",correct_pos:3},{word:"seven",role:"modifier",correct_pos:4}],distractors:[]}
+        ]
+      },
+      "modals": {
+        title: "조동사",
+        exercises: [
+          {target:"I can swim.",translation:"나는 수영할 수 있다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"can",role:"verb",correct_pos:1},{word:"swim",role:"verb",correct_pos:2}],distractors:[]},
+          {target:"You must study.",translation:"너는 공부해야 한다.",blocks:[{word:"You",role:"subject",correct_pos:0},{word:"must",role:"verb",correct_pos:1},{word:"study",role:"verb",correct_pos:2}],distractors:[]},
+          {target:"She should rest.",translation:"그녀는 쉬어야 한다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"should",role:"verb",correct_pos:1},{word:"rest",role:"verb",correct_pos:2}],distractors:[]},
+          {target:"He may come late.",translation:"그는 늦게 올지도 모른다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"may",role:"verb",correct_pos:1},{word:"come",role:"verb",correct_pos:2},{word:"late",role:"modifier",correct_pos:3}],distractors:[]},
+          {target:"We will help you.",translation:"우리가 너를 도울 것이다.",blocks:[{word:"We",role:"subject",correct_pos:0},{word:"will",role:"verb",correct_pos:1},{word:"help",role:"verb",correct_pos:2},{word:"you",role:"object",correct_pos:3}],distractors:[]}
+        ]
+      },
+      "progressive": {
+        title: "진행형",
+        exercises: [
+          {target:"She is reading a book.",translation:"그녀는 책을 읽고 있다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"reading",role:"verb",correct_pos:2},{word:"a",role:"det",correct_pos:3},{word:"book",role:"object",correct_pos:4}],distractors:[]},
+          {target:"They are playing outside.",translation:"그들은 밖에서 놀고 있다.",blocks:[{word:"They",role:"subject",correct_pos:0},{word:"are",role:"verb",correct_pos:1},{word:"playing",role:"verb",correct_pos:2},{word:"outside",role:"modifier",correct_pos:3}],distractors:[]},
+          {target:"I was watching TV.",translation:"나는 TV를 보고 있었다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"was",role:"verb",correct_pos:1},{word:"watching",role:"verb",correct_pos:2},{word:"TV",role:"object",correct_pos:3}],distractors:[]},
+          {target:"He is running in the park.",translation:"그는 공원에서 달리고 있다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"running",role:"verb",correct_pos:2},{word:"in",role:"prep",correct_pos:3},{word:"the",role:"det",correct_pos:4},{word:"park",role:"object",correct_pos:5}],distractors:[]},
+          {target:"We are learning English.",translation:"우리는 영어를 배우고 있다.",blocks:[{word:"We",role:"subject",correct_pos:0},{word:"are",role:"verb",correct_pos:1},{word:"learning",role:"verb",correct_pos:2},{word:"English",role:"object",correct_pos:3}],distractors:[]}
+        ]
+      },
+      "perfect": {
+        title: "완료형",
+        exercises: [
+          {target:"I have finished my homework.",translation:"나는 숙제를 끝냈다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"have",role:"verb",correct_pos:1},{word:"finished",role:"verb",correct_pos:2},{word:"my",role:"det",correct_pos:3},{word:"homework",role:"object",correct_pos:4}],distractors:[]},
+          {target:"She has lived here long.",translation:"그녀는 여기에 오래 살았다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"has",role:"verb",correct_pos:1},{word:"lived",role:"verb",correct_pos:2},{word:"here",role:"modifier",correct_pos:3},{word:"long",role:"modifier",correct_pos:4}],distractors:[]},
+          {target:"They have eaten lunch.",translation:"그들은 점심을 먹었다.",blocks:[{word:"They",role:"subject",correct_pos:0},{word:"have",role:"verb",correct_pos:1},{word:"eaten",role:"verb",correct_pos:2},{word:"lunch",role:"object",correct_pos:3}],distractors:[]},
+          {target:"He had already left.",translation:"그는 이미 떠났었다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"had",role:"verb",correct_pos:1},{word:"already",role:"modifier",correct_pos:2},{word:"left",role:"verb",correct_pos:3}],distractors:[]},
+          {target:"We have seen that movie.",translation:"우리는 그 영화를 봤다.",blocks:[{word:"We",role:"subject",correct_pos:0},{word:"have",role:"verb",correct_pos:1},{word:"seen",role:"verb",correct_pos:2},{word:"that",role:"det",correct_pos:3},{word:"movie",role:"object",correct_pos:4}],distractors:[]}
+        ]
+      },
+      "passive": {
+        title: "수동태",
+        exercises: [
+          {target:"The book was written by her.",translation:"그 책은 그녀에 의해 쓰여졌다.",blocks:[{word:"The",role:"det",correct_pos:0},{word:"book",role:"subject",correct_pos:1},{word:"was",role:"verb",correct_pos:2},{word:"written",role:"verb",correct_pos:3},{word:"by",role:"prep",correct_pos:4},{word:"her",role:"object",correct_pos:5}],distractors:[]},
+          {target:"English is spoken worldwide.",translation:"영어는 전세계적으로 사용된다.",blocks:[{word:"English",role:"subject",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"spoken",role:"verb",correct_pos:2},{word:"worldwide",role:"modifier",correct_pos:3}],distractors:[]},
+          {target:"The window was broken.",translation:"창문이 깨졌다.",blocks:[{word:"The",role:"det",correct_pos:0},{word:"window",role:"subject",correct_pos:1},{word:"was",role:"verb",correct_pos:2},{word:"broken",role:"verb",correct_pos:3}],distractors:[]},
+          {target:"He was invited to the party.",translation:"그는 파티에 초대되었다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"was",role:"verb",correct_pos:1},{word:"invited",role:"verb",correct_pos:2},{word:"to",role:"prep",correct_pos:3},{word:"the",role:"det",correct_pos:4},{word:"party",role:"object",correct_pos:5}],distractors:[]},
+          {target:"This song is loved by many.",translation:"이 노래는 많은 사람들에게 사랑받는다.",blocks:[{word:"This",role:"det",correct_pos:0},{word:"song",role:"subject",correct_pos:1},{word:"is",role:"verb",correct_pos:2},{word:"loved",role:"verb",correct_pos:3},{word:"by",role:"prep",correct_pos:4},{word:"many",role:"object",correct_pos:5}],distractors:[]}
+        ]
+      },
+      "infinitive": {
+        title: "부정사",
+        exercises: [
+          {target:"I want to eat pizza.",translation:"나는 피자를 먹고 싶다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"want",role:"verb",correct_pos:1},{word:"to",role:"prep",correct_pos:2},{word:"eat",role:"verb",correct_pos:3},{word:"pizza",role:"object",correct_pos:4}],distractors:[]},
+          {target:"She decided to study abroad.",translation:"그녀는 유학을 가기로 결정했다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"decided",role:"verb",correct_pos:1},{word:"to",role:"prep",correct_pos:2},{word:"study",role:"verb",correct_pos:3},{word:"abroad",role:"modifier",correct_pos:4}],distractors:[]},
+          {target:"He needs to sleep.",translation:"그는 잘 필요가 있다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"needs",role:"verb",correct_pos:1},{word:"to",role:"prep",correct_pos:2},{word:"sleep",role:"verb",correct_pos:3}],distractors:[]},
+          {target:"It is fun to swim.",translation:"수영하는 것은 재미있다.",blocks:[{word:"It",role:"subject",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"fun",role:"modifier",correct_pos:2},{word:"to",role:"prep",correct_pos:3},{word:"swim",role:"verb",correct_pos:4}],distractors:[]},
+          {target:"I have a lot to do.",translation:"나는 할 일이 많다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"have",role:"verb",correct_pos:1},{word:"a",role:"det",correct_pos:2},{word:"lot",role:"object",correct_pos:3},{word:"to",role:"prep",correct_pos:4},{word:"do",role:"verb",correct_pos:5}],distractors:[]}
+        ]
+      },
+      "gerund": {
+        title: "동명사",
+        exercises: [
+          {target:"Swimming is fun.",translation:"수영하는 것은 재미있다.",blocks:[{word:"Swimming",role:"subject",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"fun",role:"modifier",correct_pos:2}],distractors:[]},
+          {target:"I enjoy reading books.",translation:"나는 책 읽는 것을 즐긴다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"enjoy",role:"verb",correct_pos:1},{word:"reading",role:"verb",correct_pos:2},{word:"books",role:"object",correct_pos:3}],distractors:[]},
+          {target:"She finished cooking dinner.",translation:"그녀는 저녁 요리를 끝냈다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"finished",role:"verb",correct_pos:1},{word:"cooking",role:"verb",correct_pos:2},{word:"dinner",role:"object",correct_pos:3}],distractors:[]},
+          {target:"He is good at singing.",translation:"그는 노래를 잘 한다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"good",role:"modifier",correct_pos:2},{word:"at",role:"prep",correct_pos:3},{word:"singing",role:"verb",correct_pos:4}],distractors:[]},
+          {target:"Running keeps me healthy.",translation:"달리기는 나를 건강하게 한다.",blocks:[{word:"Running",role:"subject",correct_pos:0},{word:"keeps",role:"verb",correct_pos:1},{word:"me",role:"object",correct_pos:2},{word:"healthy",role:"modifier",correct_pos:3}],distractors:[]}
+        ]
+      },
+      "participle": {
+        title: "분사",
+        exercises: [
+          {target:"The singing bird is pretty.",translation:"노래하는 새는 예쁘다.",blocks:[{word:"The",role:"det",correct_pos:0},{word:"singing",role:"modifier",correct_pos:1},{word:"bird",role:"subject",correct_pos:2},{word:"is",role:"verb",correct_pos:3},{word:"pretty",role:"modifier",correct_pos:4}],distractors:[]},
+          {target:"I saw a broken window.",translation:"나는 깨진 창문을 봤다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"saw",role:"verb",correct_pos:1},{word:"a",role:"det",correct_pos:2},{word:"broken",role:"modifier",correct_pos:3},{word:"window",role:"object",correct_pos:4}],distractors:[]},
+          {target:"The excited children ran.",translation:"흥분한 아이들이 뛰었다.",blocks:[{word:"The",role:"det",correct_pos:0},{word:"excited",role:"modifier",correct_pos:1},{word:"children",role:"subject",correct_pos:2},{word:"ran",role:"verb",correct_pos:3}],distractors:[]},
+          {target:"She found a lost cat.",translation:"그녀는 잃어버린 고양이를 찾았다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"found",role:"verb",correct_pos:1},{word:"a",role:"det",correct_pos:2},{word:"lost",role:"modifier",correct_pos:3},{word:"cat",role:"object",correct_pos:4}],distractors:[]},
+          {target:"The boiling water is hot.",translation:"끓는 물은 뜨겁다.",blocks:[{word:"The",role:"det",correct_pos:0},{word:"boiling",role:"modifier",correct_pos:1},{word:"water",role:"subject",correct_pos:2},{word:"is",role:"verb",correct_pos:3},{word:"hot",role:"modifier",correct_pos:4}],distractors:[]}
+        ]
+      },
+      "comparison": {
+        title: "비교",
+        exercises: [
+          {target:"She is taller than me.",translation:"그녀는 나보다 키가 크다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"taller",role:"modifier",correct_pos:2},{word:"than",role:"prep",correct_pos:3},{word:"me",role:"object",correct_pos:4}],distractors:[]},
+          {target:"He is the tallest boy.",translation:"그는 가장 키가 큰 소년이다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"the",role:"det",correct_pos:2},{word:"tallest",role:"modifier",correct_pos:3},{word:"boy",role:"object",correct_pos:4}],distractors:[]},
+          {target:"This is better than that.",translation:"이것이 저것보다 낫다.",blocks:[{word:"This",role:"subject",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"better",role:"modifier",correct_pos:2},{word:"than",role:"prep",correct_pos:3},{word:"that",role:"object",correct_pos:4}],distractors:[]},
+          {target:"She runs as fast as him.",translation:"그녀는 그만큼 빨리 달린다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"runs",role:"verb",correct_pos:1},{word:"as",role:"modifier",correct_pos:2},{word:"fast",role:"modifier",correct_pos:3},{word:"as",role:"prep",correct_pos:4},{word:"him",role:"object",correct_pos:5}],distractors:[]},
+          {target:"He is the best player.",translation:"그는 최고의 선수이다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"the",role:"det",correct_pos:2},{word:"best",role:"modifier",correct_pos:3},{word:"player",role:"object",correct_pos:4}],distractors:[]}
+        ]
+      },
+      "relatives": {
+        title: "관계사",
+        exercises: [
+          {target:"The boy who runs is my friend.",translation:"달리는 소년은 내 친구이다.",blocks:[{word:"The",role:"det",correct_pos:0},{word:"boy",role:"subject",correct_pos:1},{word:"who",role:"subject",correct_pos:2},{word:"runs",role:"verb",correct_pos:3},{word:"is",role:"verb",correct_pos:4},{word:"my",role:"det",correct_pos:5},{word:"friend",role:"object",correct_pos:6}],distractors:[]},
+          {target:"I know the girl that sings.",translation:"나는 노래하는 소녀를 안다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"know",role:"verb",correct_pos:1},{word:"the",role:"det",correct_pos:2},{word:"girl",role:"object",correct_pos:3},{word:"that",role:"subject",correct_pos:4},{word:"sings",role:"verb",correct_pos:5}],distractors:[]},
+          {target:"This is the book which I read.",translation:"이것은 내가 읽은 책이다.",blocks:[{word:"This",role:"subject",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"the",role:"det",correct_pos:2},{word:"book",role:"object",correct_pos:3},{word:"which",role:"object",correct_pos:4},{word:"I",role:"subject",correct_pos:5},{word:"read",role:"verb",correct_pos:6}],distractors:[]},
+          {target:"The house where I live is old.",translation:"내가 사는 집은 오래되었다.",blocks:[{word:"The",role:"det",correct_pos:0},{word:"house",role:"subject",correct_pos:1},{word:"where",role:"modifier",correct_pos:2},{word:"I",role:"subject",correct_pos:3},{word:"live",role:"verb",correct_pos:4},{word:"is",role:"verb",correct_pos:5},{word:"old",role:"modifier",correct_pos:6}],distractors:[]},
+          {target:"She is the teacher whom I respect.",translation:"그녀는 내가 존경하는 선생님이다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"the",role:"det",correct_pos:2},{word:"teacher",role:"object",correct_pos:3},{word:"whom",role:"object",correct_pos:4},{word:"I",role:"subject",correct_pos:5},{word:"respect",role:"verb",correct_pos:6}],distractors:[]}
+        ]
+      },
+      "subjunctive": {
+        title: "가정법",
+        exercises: [
+          {target:"If I were rich I would travel.",translation:"내가 부자라면 여행할 텐데.",blocks:[{word:"If",role:"prep",correct_pos:0},{word:"I",role:"subject",correct_pos:1},{word:"were",role:"verb",correct_pos:2},{word:"rich",role:"modifier",correct_pos:3},{word:"I",role:"subject",correct_pos:4},{word:"would",role:"verb",correct_pos:5},{word:"travel",role:"verb",correct_pos:6}],distractors:[]},
+          {target:"I wish I could fly.",translation:"날 수 있으면 좋겠다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"wish",role:"verb",correct_pos:1},{word:"I",role:"subject",correct_pos:2},{word:"could",role:"verb",correct_pos:3},{word:"fly",role:"verb",correct_pos:4}],distractors:[]},
+          {target:"If he had studied he would have passed.",translation:"그가 공부했더라면 합격했을 텐데.",blocks:[{word:"If",role:"prep",correct_pos:0},{word:"he",role:"subject",correct_pos:1},{word:"had",role:"verb",correct_pos:2},{word:"studied",role:"verb",correct_pos:3},{word:"he",role:"subject",correct_pos:4},{word:"would",role:"verb",correct_pos:5},{word:"have",role:"verb",correct_pos:6},{word:"passed",role:"verb",correct_pos:7}],distractors:[]},
+          {target:"If it were sunny we would go out.",translation:"날씨가 맑다면 우리는 나갈 텐데.",blocks:[{word:"If",role:"prep",correct_pos:0},{word:"it",role:"subject",correct_pos:1},{word:"were",role:"verb",correct_pos:2},{word:"sunny",role:"modifier",correct_pos:3},{word:"we",role:"subject",correct_pos:4},{word:"would",role:"verb",correct_pos:5},{word:"go",role:"verb",correct_pos:6},{word:"out",role:"modifier",correct_pos:7}],distractors:[]},
+          {target:"I wish she were here.",translation:"그녀가 여기 있으면 좋겠다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"wish",role:"verb",correct_pos:1},{word:"she",role:"subject",correct_pos:2},{word:"were",role:"verb",correct_pos:3},{word:"here",role:"modifier",correct_pos:4}],distractors:[]}
+        ]
+      },
+      "speech": {
+        title: "화법",
+        exercises: [
+          {target:"He said that he was tired.",translation:"그는 피곤하다고 말했다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"said",role:"verb",correct_pos:1},{word:"that",role:"prep",correct_pos:2},{word:"he",role:"subject",correct_pos:3},{word:"was",role:"verb",correct_pos:4},{word:"tired",role:"modifier",correct_pos:5}],distractors:[]},
+          {target:"She told me to wait.",translation:"그녀는 나에게 기다리라고 말했다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"told",role:"verb",correct_pos:1},{word:"me",role:"object",correct_pos:2},{word:"to",role:"prep",correct_pos:3},{word:"wait",role:"verb",correct_pos:4}],distractors:[]},
+          {target:"He asked if I was okay.",translation:"그는 내가 괜찮은지 물었다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"asked",role:"verb",correct_pos:1},{word:"if",role:"prep",correct_pos:2},{word:"I",role:"subject",correct_pos:3},{word:"was",role:"verb",correct_pos:4},{word:"okay",role:"modifier",correct_pos:5}],distractors:[]},
+          {target:"She said she would come.",translation:"그녀는 올 것이라고 말했다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"said",role:"verb",correct_pos:1},{word:"she",role:"subject",correct_pos:2},{word:"would",role:"verb",correct_pos:3},{word:"come",role:"verb",correct_pos:4}],distractors:[]},
+          {target:"They told us to be quiet.",translation:"그들은 우리에게 조용히 하라고 말했다.",blocks:[{word:"They",role:"subject",correct_pos:0},{word:"told",role:"verb",correct_pos:1},{word:"us",role:"object",correct_pos:2},{word:"to",role:"prep",correct_pos:3},{word:"be",role:"verb",correct_pos:4},{word:"quiet",role:"modifier",correct_pos:5}],distractors:[]}
+        ]
+      },
+      "inanimate-subj": {
+        title: "무생물 주어 구문",
+        exercises: [
+          {target:"The rain made me stay home.",translation:"비 때문에 나는 집에 있었다.",blocks:[{word:"The",role:"det",correct_pos:0},{word:"rain",role:"subject",correct_pos:1},{word:"made",role:"verb",correct_pos:2},{word:"me",role:"object",correct_pos:3},{word:"stay",role:"verb",correct_pos:4},{word:"home",role:"modifier",correct_pos:5}],distractors:[]},
+          {target:"This bus will take you there.",translation:"이 버스가 너를 거기에 데려갈 것이다.",blocks:[{word:"This",role:"det",correct_pos:0},{word:"bus",role:"subject",correct_pos:1},{word:"will",role:"verb",correct_pos:2},{word:"take",role:"verb",correct_pos:3},{word:"you",role:"object",correct_pos:4},{word:"there",role:"modifier",correct_pos:5}],distractors:[]},
+          {target:"The news surprised everyone.",translation:"그 소식은 모두를 놀라게 했다.",blocks:[{word:"The",role:"det",correct_pos:0},{word:"news",role:"subject",correct_pos:1},{word:"surprised",role:"verb",correct_pos:2},{word:"everyone",role:"object",correct_pos:3}],distractors:[]},
+          {target:"The storm prevented us from leaving.",translation:"폭풍이 우리가 떠나는 것을 막았다.",blocks:[{word:"The",role:"det",correct_pos:0},{word:"storm",role:"subject",correct_pos:1},{word:"prevented",role:"verb",correct_pos:2},{word:"us",role:"object",correct_pos:3},{word:"from",role:"prep",correct_pos:4},{word:"leaving",role:"verb",correct_pos:5}],distractors:[]},
+          {target:"This key opens the door.",translation:"이 열쇠가 문을 연다.",blocks:[{word:"This",role:"det",correct_pos:0},{word:"key",role:"subject",correct_pos:1},{word:"opens",role:"verb",correct_pos:2},{word:"the",role:"det",correct_pos:3},{word:"door",role:"object",correct_pos:4}],distractors:[]}
+        ]
+      },
+      "emphasis": {
+        title: "강조 구문",
+        exercises: [
+          {target:"It is she who sings well.",translation:"노래를 잘 하는 사람은 바로 그녀이다.",blocks:[{word:"It",role:"subject",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"she",role:"subject",correct_pos:2},{word:"who",role:"subject",correct_pos:3},{word:"sings",role:"verb",correct_pos:4},{word:"well",role:"modifier",correct_pos:5}],distractors:[]},
+          {target:"I do love you.",translation:"나는 정말로 너를 사랑한다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"do",role:"verb",correct_pos:1},{word:"love",role:"verb",correct_pos:2},{word:"you",role:"object",correct_pos:3}],distractors:[]},
+          {target:"It was Tom that I met.",translation:"내가 만난 것은 바로 톰이었다.",blocks:[{word:"It",role:"subject",correct_pos:0},{word:"was",role:"verb",correct_pos:1},{word:"Tom",role:"object",correct_pos:2},{word:"that",role:"prep",correct_pos:3},{word:"I",role:"subject",correct_pos:4},{word:"met",role:"verb",correct_pos:5}],distractors:[]},
+          {target:"She does like music.",translation:"그녀는 정말 음악을 좋아한다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"does",role:"verb",correct_pos:1},{word:"like",role:"verb",correct_pos:2},{word:"music",role:"object",correct_pos:3}],distractors:[]},
+          {target:"He did finish the work.",translation:"그는 정말로 그 일을 끝냈다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"did",role:"verb",correct_pos:1},{word:"finish",role:"verb",correct_pos:2},{word:"the",role:"det",correct_pos:3},{word:"work",role:"object",correct_pos:4}],distractors:[]}
+        ]
+      }
+    }
+  },
+  "ch4": {
+    title: "제4장 품사",
+    units: {
+      "nouns": {
+        title: "명사",
+        exercises: [
+          {target:"The dog is big.",translation:"그 개는 크다.",blocks:[{word:"The",role:"det",correct_pos:0},{word:"dog",role:"subject",correct_pos:1},{word:"is",role:"verb",correct_pos:2},{word:"big",role:"modifier",correct_pos:3}],distractors:[]},
+          {target:"Water is important.",translation:"물은 중요하다.",blocks:[{word:"Water",role:"subject",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"important",role:"modifier",correct_pos:2}],distractors:[]},
+          {target:"Children like candy.",translation:"아이들은 사탕을 좋아한다.",blocks:[{word:"Children",role:"subject",correct_pos:0},{word:"like",role:"verb",correct_pos:1},{word:"candy",role:"object",correct_pos:2}],distractors:[]},
+          {target:"The teacher is kind.",translation:"그 선생님은 친절하다.",blocks:[{word:"The",role:"det",correct_pos:0},{word:"teacher",role:"subject",correct_pos:1},{word:"is",role:"verb",correct_pos:2},{word:"kind",role:"modifier",correct_pos:3}],distractors:[]},
+          {target:"Happiness is valuable.",translation:"행복은 가치있다.",blocks:[{word:"Happiness",role:"subject",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"valuable",role:"modifier",correct_pos:2}],distractors:[]}
+        ]
+      },
+      "pronouns": {
+        title: "대명사",
+        exercises: [
+          {target:"She is my sister.",translation:"그녀는 나의 언니이다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"my",role:"det",correct_pos:2},{word:"sister",role:"object",correct_pos:3}],distractors:[]},
+          {target:"They help each other.",translation:"그들은 서로 돕는다.",blocks:[{word:"They",role:"subject",correct_pos:0},{word:"help",role:"verb",correct_pos:1},{word:"each",role:"modifier",correct_pos:2},{word:"other",role:"object",correct_pos:3}],distractors:[]},
+          {target:"This is mine.",translation:"이것은 내 것이다.",blocks:[{word:"This",role:"subject",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"mine",role:"object",correct_pos:2}],distractors:[]},
+          {target:"He gave it to her.",translation:"그는 그것을 그녀에게 주었다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"gave",role:"verb",correct_pos:1},{word:"it",role:"object",correct_pos:2},{word:"to",role:"prep",correct_pos:3},{word:"her",role:"object",correct_pos:4}],distractors:[]},
+          {target:"We enjoyed ourselves.",translation:"우리는 즐겁게 보냈다.",blocks:[{word:"We",role:"subject",correct_pos:0},{word:"enjoyed",role:"verb",correct_pos:1},{word:"ourselves",role:"object",correct_pos:2}],distractors:[]}
+        ]
+      },
+      "adjectives": {
+        title: "형용사",
+        exercises: [
+          {target:"The tall boy runs.",translation:"키 큰 소년이 달린다.",blocks:[{word:"The",role:"det",correct_pos:0},{word:"tall",role:"modifier",correct_pos:1},{word:"boy",role:"subject",correct_pos:2},{word:"runs",role:"verb",correct_pos:3}],distractors:[]},
+          {target:"She is very beautiful.",translation:"그녀는 매우 아름답다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"very",role:"modifier",correct_pos:2},{word:"beautiful",role:"modifier",correct_pos:3}],distractors:[]},
+          {target:"The old house is large.",translation:"그 오래된 집은 크다.",blocks:[{word:"The",role:"det",correct_pos:0},{word:"old",role:"modifier",correct_pos:1},{word:"house",role:"subject",correct_pos:2},{word:"is",role:"verb",correct_pos:3},{word:"large",role:"modifier",correct_pos:4}],distractors:[]},
+          {target:"I want a cold drink.",translation:"나는 차가운 음료를 원한다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"want",role:"verb",correct_pos:1},{word:"a",role:"det",correct_pos:2},{word:"cold",role:"modifier",correct_pos:3},{word:"drink",role:"object",correct_pos:4}],distractors:[]},
+          {target:"The red car is fast.",translation:"빨간 차는 빠르다.",blocks:[{word:"The",role:"det",correct_pos:0},{word:"red",role:"modifier",correct_pos:1},{word:"car",role:"subject",correct_pos:2},{word:"is",role:"verb",correct_pos:3},{word:"fast",role:"modifier",correct_pos:4}],distractors:[]}
+        ]
+      },
+      "adverbs": {
+        title: "부사",
+        exercises: [
+          {target:"She sings beautifully.",translation:"그녀는 아름답게 노래한다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"sings",role:"verb",correct_pos:1},{word:"beautifully",role:"modifier",correct_pos:2}],distractors:[]},
+          {target:"He runs very quickly.",translation:"그는 매우 빨리 달린다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"runs",role:"verb",correct_pos:1},{word:"very",role:"modifier",correct_pos:2},{word:"quickly",role:"modifier",correct_pos:3}],distractors:[]},
+          {target:"I always eat breakfast.",translation:"나는 항상 아침을 먹는다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"always",role:"modifier",correct_pos:1},{word:"eat",role:"verb",correct_pos:2},{word:"breakfast",role:"object",correct_pos:3}],distractors:[]},
+          {target:"She never comes late.",translation:"그녀는 절대 늦게 오지 않는다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"never",role:"modifier",correct_pos:1},{word:"comes",role:"verb",correct_pos:2},{word:"late",role:"modifier",correct_pos:3}],distractors:[]},
+          {target:"They often play together.",translation:"그들은 자주 같이 논다.",blocks:[{word:"They",role:"subject",correct_pos:0},{word:"often",role:"modifier",correct_pos:1},{word:"play",role:"verb",correct_pos:2},{word:"together",role:"modifier",correct_pos:3}],distractors:[]}
+        ]
+      },
+      "prepositions": {
+        title: "전치사",
+        exercises: [
+          {target:"The cat is on the table.",translation:"고양이는 탁자 위에 있다.",blocks:[{word:"The",role:"det",correct_pos:0},{word:"cat",role:"subject",correct_pos:1},{word:"is",role:"verb",correct_pos:2},{word:"on",role:"prep",correct_pos:3},{word:"the",role:"det",correct_pos:4},{word:"table",role:"object",correct_pos:5}],distractors:[]},
+          {target:"She goes to school by bus.",translation:"그녀는 버스로 학교에 간다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"goes",role:"verb",correct_pos:1},{word:"to",role:"prep",correct_pos:2},{word:"school",role:"object",correct_pos:3},{word:"by",role:"prep",correct_pos:4},{word:"bus",role:"object",correct_pos:5}],distractors:[]},
+          {target:"He is in the room.",translation:"그는 방에 있다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"in",role:"prep",correct_pos:2},{word:"the",role:"det",correct_pos:3},{word:"room",role:"object",correct_pos:4}],distractors:[]},
+          {target:"We arrived at the airport.",translation:"우리는 공항에 도착했다.",blocks:[{word:"We",role:"subject",correct_pos:0},{word:"arrived",role:"verb",correct_pos:1},{word:"at",role:"prep",correct_pos:2},{word:"the",role:"det",correct_pos:3},{word:"airport",role:"object",correct_pos:4}],distractors:[]},
+          {target:"The book is under the desk.",translation:"책은 책상 아래에 있다.",blocks:[{word:"The",role:"det",correct_pos:0},{word:"book",role:"subject",correct_pos:1},{word:"is",role:"verb",correct_pos:2},{word:"under",role:"prep",correct_pos:3},{word:"the",role:"det",correct_pos:4},{word:"desk",role:"object",correct_pos:5}],distractors:[]}
+        ]
+      },
+      "conjunctions": {
+        title: "접속사",
+        exercises: [
+          {target:"I like tea and coffee.",translation:"나는 차와 커피를 좋아한다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"like",role:"verb",correct_pos:1},{word:"tea",role:"object",correct_pos:2},{word:"and",role:"prep",correct_pos:3},{word:"coffee",role:"object",correct_pos:4}],distractors:[]},
+          {target:"He is tired but happy.",translation:"그는 피곤하지만 행복하다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"is",role:"verb",correct_pos:1},{word:"tired",role:"modifier",correct_pos:2},{word:"but",role:"prep",correct_pos:3},{word:"happy",role:"modifier",correct_pos:4}],distractors:[]},
+          {target:"She sings or dances.",translation:"그녀는 노래하거나 춤춘다.",blocks:[{word:"She",role:"subject",correct_pos:0},{word:"sings",role:"verb",correct_pos:1},{word:"or",role:"prep",correct_pos:2},{word:"dances",role:"verb",correct_pos:3}],distractors:[]},
+          {target:"I study because I want to learn.",translation:"나는 배우고 싶어서 공부한다.",blocks:[{word:"I",role:"subject",correct_pos:0},{word:"study",role:"verb",correct_pos:1},{word:"because",role:"prep",correct_pos:2},{word:"I",role:"subject",correct_pos:3},{word:"want",role:"verb",correct_pos:4},{word:"to",role:"prep",correct_pos:5},{word:"learn",role:"verb",correct_pos:6}],distractors:[]},
+          {target:"He was late so he ran.",translation:"그는 늦어서 뛰었다.",blocks:[{word:"He",role:"subject",correct_pos:0},{word:"was",role:"verb",correct_pos:1},{word:"late",role:"modifier",correct_pos:2},{word:"so",role:"prep",correct_pos:3},{word:"he",role:"subject",correct_pos:4},{word:"ran",role:"verb",correct_pos:5}],distractors:[]}
+        ]
+      },
+      "interjections": {
+        title: "감탄사",
+        exercises: [
+          {target:"Wow that is amazing!",translation:"와, 대단하다!",blocks:[{word:"Wow",role:"modifier",correct_pos:0},{word:"that",role:"subject",correct_pos:1},{word:"is",role:"verb",correct_pos:2},{word:"amazing",role:"modifier",correct_pos:3}],distractors:[]},
+          {target:"Oh I forgot my bag.",translation:"아, 가방을 잊었다.",blocks:[{word:"Oh",role:"modifier",correct_pos:0},{word:"I",role:"subject",correct_pos:1},{word:"forgot",role:"verb",correct_pos:2},{word:"my",role:"det",correct_pos:3},{word:"bag",role:"object",correct_pos:4}],distractors:[]},
+          {target:"Oops I dropped it.",translation:"이런, 떨어뜨렸다.",blocks:[{word:"Oops",role:"modifier",correct_pos:0},{word:"I",role:"subject",correct_pos:1},{word:"dropped",role:"verb",correct_pos:2},{word:"it",role:"object",correct_pos:3}],distractors:[]},
+          {target:"Hey come here please.",translation:"야, 이리 와 줘.",blocks:[{word:"Hey",role:"modifier",correct_pos:0},{word:"come",role:"verb",correct_pos:1},{word:"here",role:"modifier",correct_pos:2},{word:"please",role:"modifier",correct_pos:3}],distractors:[]},
+          {target:"Hurray we won the game!",translation:"만세, 우리가 경기에서 이겼다!",blocks:[{word:"Hurray",role:"modifier",correct_pos:0},{word:"we",role:"subject",correct_pos:1},{word:"won",role:"verb",correct_pos:2},{word:"the",role:"det",correct_pos:3},{word:"game",role:"object",correct_pos:4}],distractors:[]}
+        ]
+      }
+    }
+  }
+};
 
-function loadSample(idx){
-  currentData=SAMPLES[idx];
-  renderWorksheet();
-  toast('샘플 워크시트 로드됨');
+// ═══════════════════════════════════════════
+// SIDEBAR & NAVIGATION
+// ═══════════════════════════════════════════
+function getProgress(){
+  try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}
+}
+function saveProgress(key){
+  const p=getProgress();p[key]=true;localStorage.setItem(STORAGE_KEY,JSON.stringify(p));
 }
 
-// ═══ AI GENERATE ═══
-async function generate(){
-  const topic=document.getElementById('c-topic').value.trim()||'동물';
-  const level=document.getElementById('c-level').value;
-  const count=parseInt(document.getElementById('c-count').value);
-  const distract=document.getElementById('c-distract').value==='1';
-  const btn=document.getElementById('gen-btn');
+function countAllUnits(){
+  let total=0;
+  for(const ch of Object.values(CURRICULUM)){total+=Object.keys(ch.units).length}
+  return total;
+}
+
+function countCompletedUnits(){
+  const p=getProgress();
+  let c=0;
+  for(const [ck,ch] of Object.entries(CURRICULUM)){
+    for(const uk of Object.keys(ch.units)){if(p[ck+'/'+uk])c++}
+  }
+  return c;
+}
+
+function buildSidebar(){
+  const tree=document.getElementById('sidebar-tree');
+  const p=getProgress();
+  let html='';
+  for(const [chKey,ch] of Object.entries(CURRICULUM)){
+    html+=`<div class="cur-chapter open" id="ch-${chKey}">`;
+    html+=`<div class="cur-chapter-title" onclick="toggleChapter('${chKey}')">${ch.title} <span class="arrow">&#9654;</span></div>`;
+    html+=`<div class="cur-items">`;
+    for(const [uKey,unit] of Object.entries(ch.units)){
+      const fullKey=chKey+'/'+uKey;
+      const done=p[fullKey];
+      const active=currentUnitKey===fullKey?' active':'';
+      html+=`<div class="cur-item${active}" id="cur-${fullKey.replace('/','-')}" onclick="loadUnit('${chKey}','${uKey}')">`;
+      html+=`<span>${unit.title}</span>`;
+      html+=`<span style="display:flex;gap:4px;align-items:center">`;
+      if(done)html+=`<span class="done-mark">&#10003;</span>`;
+      html+=`<span class="prob-count">${unit.exercises.length}</span>`;
+      html+=`</span></div>`;
+    }
+    html+=`</div></div>`;
+  }
+  tree.innerHTML=html;
+  updateProgress();
+}
+
+function updateProgress(){
+  const total=countAllUnits();
+  const done=countCompletedUnits();
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('progress-fill').style.width=pct+'%';
+  document.getElementById('progress-text').textContent=done+' / '+total+' 완료';
+}
+
+function toggleChapter(chKey){
+  document.getElementById('ch-'+chKey).classList.toggle('open');
+}
+
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('collapsed');
+}
+
+function loadUnit(chKey,uKey){
+  const ch=CURRICULUM[chKey];
+  const unit=ch.units[uKey];
+  if(!unit)return;
+  currentUnitKey=chKey+'/'+uKey;
+
+  // Show unit header
+  document.getElementById('unit-header-area').innerHTML=`
+    <div class="unit-header">
+      <div class="unit-chapter">${ch.title}</div>
+      <h2>${unit.title}</h2>
+    </div>`;
+
+  currentData={title:ch.title+' - '+unit.title, items:unit.exercises};
+  renderWorksheet();
+  buildSidebar(); // refresh active state
+  toast(unit.title+' 로드됨');
+}
+
+// ═══════════════════════════════════════════
+// AI GENERATE (topic-specific)
+// ═══════════════════════════════════════════
+async function generateAI(){
+  let topic='영어 문법';
+  let unitTitle='';
+  if(currentUnitKey){
+    const parts=currentUnitKey.split('/');
+    const ch=CURRICULUM[parts[0]];
+    const unit=ch.units[parts[1]];
+    topic=unit.title;
+    unitTitle=unit.title;
+  }
+
+  const btn=document.getElementById('ai-btn');
   const loading=document.getElementById('loading');
-
   btn.disabled=true;loading.style.display='block';
-  document.getElementById('worksheet').innerHTML='';
-  document.getElementById('score-bar').classList.remove('show');
 
-  const prompt=`주제: ${topic}, 레벨: ${level}, 문항수: ${count}, 방해블록: ${distract?'포함':'없음'}
+  const prompt=`주제: ${topic}, 레벨: Intermediate, 문항수: 5, 방해블록: 없음
 
 영어 문장 조립 워크시트를 만드세요. 각 문장을 단어 블록으로 분해하세요.
+${unitTitle?'문법 주제는 "'+unitTitle+'"입니다. 이 문법에 맞는 문장을 만드세요.':''}
 
 JSON으로만 응답:
-{"title":"제목","items":[{"target":"완성 문장","translation":"한국어 해석","blocks":[{"word":"단어","role":"det|subject|verb|object|modifier|prep","correct_pos":0}],"distractors":[{"word":"방해단어","role":"역할"}]}]}
+{"title":"제목","items":[{"target":"완성 문장","translation":"한국어 해석","blocks":[{"word":"단어","role":"det|subject|verb|object|modifier|prep","correct_pos":0}],"distractors":[]}]}
 
 role 종류: det(관사/한정사), subject(주어), verb(동사), object(목적어), modifier(형용사/부사), prep(전치사)
-correct_pos는 올바른 순서(0부터). ${level} 수준에 맞는 문장을 만드세요.`;
+correct_pos는 올바른 순서(0부터).`;
 
   try{
     const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:4096,system:'영어 학습 워크시트 생성기. JSON으로만 응답하세요.',messages:[{role:'user',content:prompt}]})});
@@ -250,29 +749,37 @@ correct_pos는 올바른 순서(0부터). ${level} 수준에 맞는 문장을 �
     raw=raw.replace(/```json\s*/g,'').replace(/```\s*/g,'').trim();
     const fi=raw.indexOf('{'),li=raw.lastIndexOf('}');
     if(fi>=0&&li>fi)raw=raw.substring(fi,li+1);
-    currentData=JSON.parse(raw);
+    const aiData=JSON.parse(raw);
+
+    // Append to current worksheet
+    if(currentData&&currentData.items){
+      currentData.items=currentData.items.concat(aiData.items||[]);
+    }else{
+      currentData=aiData;
+    }
     renderWorksheet();
-    toast('워크시트 생성 완료!');
+    toast('AI 문제 추가 완료!');
   }catch(e){
     console.error(e);
-    document.getElementById('worksheet').innerHTML=`<div style="text-align:center;padding:32px;color:var(--red)">⚠ ${e.message}<br><button class="btn btn-primary" style="margin-top:12px" onclick="generate()">다시 시도</button></div>`;
+    toast('AI 생성 실패: '+e.message);
   }finally{btn.disabled=false;loading.style.display='none'}
 }
 
-// ═══ RENDER ═══
+// ═══════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════
 function renderWorksheet(){
   if(!currentData)return;
   const ws=document.getElementById('worksheet');
   ws.innerHTML='';
   itemStates=[];
-  document.getElementById('print-title').textContent='EPL영어학원 · '+(currentData.title||'워크시트');
+  document.getElementById('print-title').textContent='EPL영어학원 - '+(currentData.title||'워크시트');
   document.getElementById('check-btn').style.display='inline-flex';
   document.getElementById('reset-btn').style.display='inline-flex';
   document.getElementById('score-bar').classList.remove('show');
 
   currentData.items.forEach((item,idx)=>{
     const allBlocks=[...item.blocks,...(item.distractors||[]).map(d=>({...d,correct_pos:-1,isDistractor:true}))];
-    // 셔플
     for(let i=allBlocks.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[allBlocks[i],allBlocks[j]]=[allBlocks[j],allBlocks[i]]}
 
     const state={blocks:allBlocks,slots:new Array(item.blocks.length).fill(null),checked:false};
@@ -288,24 +795,25 @@ function renderWorksheet(){
       </div>
       <div class="ws-item-body">
         <div class="block-bank" id="bank-${idx}">
-          <div class="block-bank-label">🧱 블록을 클릭하세요</div>
+          <div class="block-bank-label">&#129521; 블록을 클릭하세요</div>
           ${allBlocks.map((b,bi)=>`<div class="block ${ROLE_CLASS[b.role]||'block-distractor'}" data-item="${idx}" data-bidx="${bi}" onclick="pickBlock(${idx},${bi})">${b.word}</div>`).join('')}
         </div>
         <div class="slots" id="slots-${idx}">
-          ${item.blocks.map((_,si)=>`<div class="slot" id="slot-${idx}-${si}" data-item="${idx}" data-sidx="${si}" onclick="unpickSlot(${idx},${si})"><span style="font-family:Caveat;font-size:16px">①②③④⑤⑥⑦⑧⑨⑩</span></div>`).join('')}
+          ${item.blocks.map((_,si)=>`<div class="slot" id="slot-${idx}-${si}" data-item="${idx}" data-sidx="${si}" onclick="unpickSlot(${idx},${si})"></div>`).join('')}
         </div>
       </div>
     `;
     ws.appendChild(div);
 
-    // 슬롯 번호 표시
     div.querySelectorAll('.slot').forEach((s,si)=>{
-      s.innerHTML=`<span style="font-family:'Caveat',cursive;font-size:16px;color:var(--ink-mute)">${'①②③④⑤⑥⑦⑧⑨⑩'[si]||si+1}</span>`;
+      s.innerHTML=`<span style="font-family:'Caveat',cursive;font-size:16px;color:var(--ink-mute)">${'\u2460\u2461\u2462\u2463\u2464\u2465\u2466\u2467\u2468\u2469'[si]||si+1}</span>`;
     });
   });
 }
 
-// ═══ INTERACTION ═══
+// ═══════════════════════════════════════════
+// INTERACTION
+// ═══════════════════════════════════════════
 function pickBlock(itemIdx,blockIdx){
   const state=itemStates[itemIdx];
   if(state.checked)return;
@@ -315,11 +823,9 @@ function pickBlock(itemIdx,blockIdx){
   state.slots[slotIdx]=blockIdx;
   const block=state.blocks[blockIdx];
 
-  // bank에서 숨기기
   const bankBlocks=document.querySelectorAll(`#bank-${itemIdx} .block`);
   bankBlocks[blockIdx].classList.add('placed');
 
-  // slot에 블록 넣기
   const slot=document.getElementById(`slot-${itemIdx}-${slotIdx}`);
   slot.innerHTML=`<div class="block ${ROLE_CLASS[block.role]||'block-distractor'}" style="cursor:pointer">${block.word}</div>`;
   slot.classList.add('filled');
@@ -333,18 +839,19 @@ function unpickSlot(itemIdx,slotIdx){
 
   state.slots[slotIdx]=null;
 
-  // bank에서 복원
   const bankBlocks=document.querySelectorAll(`#bank-${itemIdx} .block`);
   bankBlocks[blockIdx].classList.remove('placed');
 
-  // slot 비우기
   const slot=document.getElementById(`slot-${itemIdx}-${slotIdx}`);
-  slot.innerHTML=`<span style="font-family:'Caveat',cursive;font-size:16px;color:var(--ink-mute)">${'①②③④⑤⑥⑦⑧⑨⑩'[slotIdx]}</span>`;
+  slot.innerHTML=`<span style="font-family:'Caveat',cursive;font-size:16px;color:var(--ink-mute)">${'\u2460\u2461\u2462\u2463\u2464\u2465\u2466\u2467\u2468\u2469'[slotIdx]}</span>`;
   slot.classList.remove('filled','correct','wrong');
 }
 
-// ═══ CHECK ═══
+// ═══════════════════════════════════════════
+// CHECK
+// ═══════════════════════════════════════════
 function checkAll(){
+  if(!currentData)return;
   let correct=0,total=currentData.items.length;
 
   currentData.items.forEach((item,idx)=>{
@@ -374,8 +881,18 @@ function checkAll(){
   document.getElementById('score-num').textContent=correct+'/'+total;
   document.getElementById('score-bar').classList.add('show');
 
-  if(correct===total)celebrate();
-  toast(correct===total?'🎉 전부 정답!':correct+'/'+total+' 정답');
+  // Mark unit complete if all correct
+  if(correct===total&&currentUnitKey){
+    saveProgress(currentUnitKey);
+    buildSidebar();
+    celebrate();
+  }
+
+  if(correct===total){
+    toast('&#127881; 전부 정답!');
+  }else{
+    toast(correct+'/'+total+' 정답');
+  }
 }
 
 function resetAll(){
@@ -384,7 +901,9 @@ function resetAll(){
   toast('다시 풀기');
 }
 
-// ═══ CELEBRATION ═══
+// ═══════════════════════════════════════════
+// CELEBRATION
+// ═══════════════════════════════════════════
 function celebrate(){
   const el=document.getElementById('celebration');
   el.innerHTML='';el.classList.add('show');
@@ -397,8 +916,11 @@ function celebrate(){
   setTimeout(()=>{el.classList.remove('show');el.innerHTML=''},3000);
 }
 
-// Ctrl+Enter
-document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter')generate()});
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+buildSidebar();
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter')generateAI()});
 </script>
 </body>
 </html>
