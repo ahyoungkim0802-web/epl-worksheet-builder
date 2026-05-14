@@ -180,7 +180,9 @@ body{background:var(--bg);color:var(--ink);font-family:'Pretendard',sans-serif;f
     </div>
   </div>
   <div class="header-actions">
-    <button class="btn btn-primary btn-sm" id="ai-btn" onclick="generateAI()">AI로 추가 문제</button>
+    <input type="number" id="ai-count" min="1" max="50" value="10" style="width:52px;padding:6px 8px;border:1.5px solid var(--bg-deep);border-radius:var(--radius-block);font-family:inherit;font-size:13px;text-align:center">
+    <span style="font-size:12px;color:var(--ink-mute);margin-right:4px">문제</span>
+    <button class="btn btn-primary btn-sm" id="ai-btn" onclick="generateAI()">AI로 만들기</button>
     <button class="btn btn-success btn-sm" id="check-btn" onclick="checkAll()" style="display:none">&#10003; 정답 확인</button>
     <button class="btn btn-secondary btn-sm" id="reset-btn" onclick="resetAll()" style="display:none">&#8635; 다시 풀기</button>
     <button class="btn btn-secondary btn-sm" onclick="window.print()">&#128424; 인쇄</button>
@@ -731,19 +733,20 @@ async function generateAI(){
   const loading=document.getElementById('loading');
   btn.disabled=true;loading.style.display='block';
 
-  const prompt=`주제: ${topic}, 레벨: Intermediate, 문항수: 5, 방해블록: 없음
+  const count=parseInt(document.getElementById('ai-count').value)||10;
+  const prompt=`주제: ${topic}, 레벨: Intermediate, 문항수: ${count}, 방해블록: 없음
 
-영어 문장 조립 워크시트를 만드세요. 각 문장을 단어 블록으로 분해하세요.
-${unitTitle?'문법 주제는 "'+unitTitle+'"입니다. 이 문법에 맞는 문장을 만드세요.':''}
+영어 문장 조립 워크시트를 만드세요. 정확히 ${count}개의 문장을 단어 블록으로 분해하세요.
+${unitTitle?'문법 주제는 "'+unitTitle+'"입니다. 이 문법에 맞는 다양한 문장 ${count}개를 만드세요.':''}
 
-JSON으로만 응답:
+JSON으로만 응답. compact JSON(들여쓰기 없이):
 {"title":"제목","items":[{"target":"완성 문장","translation":"한국어 해석","blocks":[{"word":"단어","role":"det|subject|verb|object|modifier|prep","correct_pos":0}],"distractors":[]}]}
 
 role 종류: det(관사/한정사), subject(주어), verb(동사), object(목적어), modifier(형용사/부사), prep(전치사)
-correct_pos는 올바른 순서(0부터).`;
+correct_pos는 올바른 순서(0부터). 반드시 ${count}개 items를 만드세요.`;
 
   try{
-    const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:4096,system:'영어 학습 워크시트 생성기. JSON으로만 응답하세요.',messages:[{role:'user',content:prompt}]})});
+    const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:8192,system:'영어 학습 워크시트 생성기. compact JSON으로만 응답. 들여쓰기 금지.',messages:[{role:'user',content:prompt}]})});
     const data=await res.json();
     let raw=data.content?.[0]?.text||'';
     raw=raw.replace(/```json\s*/g,'').replace(/```\s*/g,'').trim();
